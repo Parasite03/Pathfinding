@@ -31,6 +31,9 @@ public:
 	static Tile* GetTile(const short x, const short y);
 	static Tile* GetTile(const sf::Vector2f position);
 
+	static short GetWidth();
+	static short GetHeight();
+
 private:
 	static Map current_map_;
 

@@ -75,23 +75,23 @@ void Map::LoadMap(const std::string name)
 			switch(strings.at(i).at(j))
 			{
 			case '*':
-				tile.type = 0;
+				tile.type = TILE_BLANK;
 				break;
 
 			case '#':
-				tile.type = 1;
+				tile.type = TILE_WALL;
 				break;
 
 			case 'S':
-				tile.type = 2;
+				tile.type = TILE_START;
 				break;
 
 			case 'E':
-				tile.type = 3;
+				tile.type = TILE_END;
 				break;
 
 			default:
-				tile.type = 0;
+				tile.type = TILE_BLANK;
 				break;
 			}
 
@@ -122,19 +122,19 @@ void Map::SaveMap(const std::string path)
 		{
 			switch (tile.type)
 			{
-			case 0:
+			case TILE_BLANK:
 				string.push_back('*');
 				break;
 
-			case 1:
+			case TILE_WALL:
 				string.push_back('#');
 				break;
 
-			case 2:
+			case TILE_START:
 				string.push_back('S');
 				break;
 
-			case 3:
+			case TILE_END:
 				string.push_back('E');
 				break;
 
@@ -169,23 +169,23 @@ void Map::DrawMap(sf::RenderWindow* window)
 		{
 			switch (tile.type)
 			{
-			case 0:
+			case TILE_BLANK:
 				sprite.setColor(sf::Color::White);
 				break;
 
-			case 1:
+			case TILE_WALL:
 				sprite.setColor(sf::Color::Black);
 				break;
 
-			case 2:
+			case TILE_START:
 				sprite.setColor(sf::Color::Green);
 				break;
 
-			case 3:
+			case TILE_END:
 				sprite.setColor(sf::Color::Red);
 				break;
 
-			case 4:
+			case TILE_CHECKED:
 				sprite.setColor(sf::Color::Yellow);
 				break;
 
@@ -270,3 +270,14 @@ Tile* Map::GetTile(const sf::Vector2f position)
 {
 	return &current_map_.tiles_.at(position.y).at(position.x);
 }
+
+short Map::GetWidth()
+{
+	return current_map_.width_;
+}
+
+short Map::GetHeight()
+{
+	return current_map_.height_;
+}
+
