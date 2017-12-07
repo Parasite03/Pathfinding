@@ -25,8 +25,14 @@ public:
 	static void SaveMap(const std::string path);
 	static void DrawMap(sf::RenderWindow* window);
 	static void Paint(sf::RenderWindow* window);
+
 	static void ProcessEvent(sf::Event::EventType event, sf::RenderWindow* window);
+	static void CenterCamera(sf::RenderWindow* window);
+	static void MoveCamera(sf::RenderWindow* window);
+
 	static Map* GetCurrentMap();
+	static sf::Vector2f GetStartCoordinates();
+	static sf::Vector2f GetEndCoordinates();
 
 	static void SetTile(Tile* tile, const short x, const short y);
 	static Tile* GetTile(const short x, const short y);
@@ -41,6 +47,9 @@ private:
 	short width_;
 	short height_;
 	short selected_tile_type_ = 0;
+
+	sf::Vector2f start_coordinates_;
+	sf::Vector2f end_coordinates_;
 
 	Map();
 	~Map();
