@@ -84,10 +84,12 @@ void Map::LoadMap(const std::string name)
 
 			case 'S':
 				tile.type = TILE_START;
+				current_map_.start_coordinates_ = sf::Vector2f(j, i);
 				break;
 
 			case 'E':
 				tile.type = TILE_END;
+				current_map_.end_coordinates_ = sf::Vector2f(j, i);
 				break;
 
 			default:
@@ -210,10 +212,10 @@ void Map::Paint(sf::RenderWindow* window)
 
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
 	{
-		if (current_map_.selected_tile_type_ == 0)
-			painting_type = 1;
+		if (current_map_.selected_tile_type_ == TILE_BLANK)
+			painting_type = TILE_WALL;
 		else
-			painting_type = 0;
+			painting_type = TILE_BLANK;
 
 		
 		if (coordinates.x >= 0 && coordinates.y >= 0 && coordinates.x < current_map_.width_ && coordinates.y < current_map_.height_)
@@ -223,14 +225,28 @@ void Map::Paint(sf::RenderWindow* window)
 
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Right))
 	{
-		if (current_map_.selected_tile_type_ == 2)
-			painting_type = 3;
+		if (current_map_.selected_tile_type_ == TILE_START)
+			painting_type = TILE_END;
 		else
-			painting_type = 2;
+			painting_type = TILE_START;
 
 		if (coordinates.x >= 0 && coordinates.y >= 0 && coordinates.x < current_map_.width_ && coordinates.y < current_map_.height_)
-			GetTile(coordinates)->type = painting_type;
+		{
+			if (painting_type == TILE_START)
+			{
+				if (Map::GetTile(current_map_.start_coordinates_)->type == TILE_START)
+					Map::GetTile(current_map_.start_coordinates_)->type = TILE_BLANK;
+				current_map_.start_coordinates_ = coordinates;
+			}
+			else if (painting_type == TILE_END)
+			{
+				if (Map::GetTile(current_map_.end_coordinates_)->type == TILE_END)
+					Map::GetTile(current_map_.end_coordinates_)->type = TILE_BLANK;
+				current_map_.end_coordinates_ = coordinates;
+			}
 
+			GetTile(coordinates)->type = painting_type;
+		}
 	}
 }
 
@@ -286,6 +302,16 @@ void Map::MoveCamera(sf::RenderWindow* window)
 Map* Map::GetCurrentMap()
 {
 	return &current_map_;
+}
+
+sf::Vector2f Map::GetStartCoordinates()
+{
+	return current_map_.start_coordinates_;
+}
+
+sf::Vector2f Map::GetEndCoordinates()
+{
+	return current_map_.end_coordinates_;
 }
 
 void Map::SetTile(Tile* tile, const short x, const short y)
