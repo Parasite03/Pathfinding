@@ -5,6 +5,7 @@
 #define TILE_START 2
 #define TILE_END 3
 #define TILE_CHECKED 4
+#define TILE_PATH 5
 
 struct Tile
 {

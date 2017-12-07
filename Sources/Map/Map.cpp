@@ -191,6 +191,10 @@ void Map::DrawMap(sf::RenderWindow* window)
 				sprite.setColor(sf::Color::Yellow);
 				break;
 
+			case TILE_PATH:
+				sprite.setColor(sf::Color::Cyan);
+				break;
+
 			default:
 				sprite.setColor(sf::Color::White);
 				break;

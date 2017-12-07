@@ -3,7 +3,7 @@
 class LeeAlgorithm
 {
 public:
-	static void FindPath(sf::Vector2f start_position, sf::Vector2f end_position, short number_of_directions);
+	static void FindPath(sf::Vector2f start_position, sf::Vector2f end_position, short direction_count);
 	static void ShowPath();
 	static void ResetPath();
 

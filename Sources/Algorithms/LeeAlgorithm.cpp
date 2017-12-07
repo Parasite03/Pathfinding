@@ -13,7 +13,7 @@ LeeAlgorithm::~LeeAlgorithm()
 
 }
 
-void LeeAlgorithm::FindPath(sf::Vector2f start_position, sf::Vector2f end_position, short number_of_directions)
+void LeeAlgorithm::FindPath(sf::Vector2f start_position, sf::Vector2f end_position, short direction_count)
 {
 
 	current_algorithm_ = LeeAlgorithm();
@@ -21,7 +21,7 @@ void LeeAlgorithm::FindPath(sf::Vector2f start_position, sf::Vector2f end_positi
 	SetStartPosition(start_position);
 	SetEndPosition(end_position);
 
-	current_algorithm_.direction_count_ = number_of_directions;
+	current_algorithm_.direction_count_ = direction_count;
 
 	std::vector<short> y_direction;
 	std::vector<short> x_direction;
@@ -41,17 +41,17 @@ void LeeAlgorithm::FindPath(sf::Vector2f start_position, sf::Vector2f end_positi
 	LeeAlgorithm::ResetPath();
 
 	bool stop;
-	short cost = 0;
+	short distance = 0;
 	sf::Vector2f path;
 
-	Map::GetTile(LeeAlgorithm::GetStartPosition())->g_cost = cost;
+	Map::GetTile(LeeAlgorithm::GetStartPosition())->g_cost = distance;
 
 	do {
 		stop = true;
 		for (auto y = 0; y < Map::GetHeight(); ++y)
 			for (auto x = 0; x < Map::GetWidth(); ++x)
 			{
-				if (Map::GetTile(x, y)->g_cost == cost)
+				if (Map::GetTile(x, y)->g_cost == distance)
 				{
 					for (auto i = 0; i < LeeAlgorithm::GetDirectionCount(); ++i)
 					{
@@ -59,13 +59,13 @@ void LeeAlgorithm::FindPath(sf::Vector2f start_position, sf::Vector2f end_positi
 						if (iy >= 0 && ix >= 0 && iy < Map::GetHeight() && ix < Map::GetWidth() && Map::GetTile(ix, iy)->g_cost == -1)
 						{
 							stop = false;
-							Map::GetTile(ix, iy)->g_cost = cost + 1;
+							Map::GetTile(ix, iy)->g_cost = distance + 1;
 							Map::GetTile(ix, iy)->type = TILE_CHECKED;
 						}
 					}
 				}
 			}
-		cost++;
+		distance++;
 	} while (!stop && Map::GetTile(LeeAlgorithm::GetEndPosition())->g_cost == -1);
 
 	if (Map::GetTile(LeeAlgorithm::GetEndPosition())->g_cost == -1) return;
@@ -74,16 +74,16 @@ void LeeAlgorithm::FindPath(sf::Vector2f start_position, sf::Vector2f end_positi
 
 	current_algorithm_.path_length_ = Map::GetTile(LeeAlgorithm::GetEndPosition())->g_cost;
 	path = LeeAlgorithm::GetEndPosition();
-	cost = current_algorithm_.path_length_;
+	distance = current_algorithm_.path_length_;
 
-	while (cost > 0)
+	while (distance > 0)
 	{
 		current_algorithm_.path_.push_back(path);
-		cost--;
+		distance--;
 		for (auto i = 0; i < LeeAlgorithm::GetDirectionCount(); ++i)
 		{
 			int iy = path.y + y_direction.at(i), ix = path.x + x_direction.at(i);
-			if (iy >= 0 && ix >= 0 && iy < Map::GetHeight() && ix < Map::GetWidth() && Map::GetTile(ix, iy)->g_cost == cost)
+			if (iy >= 0 && ix >= 0 && iy < Map::GetHeight() && ix < Map::GetWidth() && Map::GetTile(ix, iy)->g_cost == distance)
 			{
 				path.y += y_direction[i];
 				path.x += x_direction[i];
