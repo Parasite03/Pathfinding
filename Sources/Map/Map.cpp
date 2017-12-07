@@ -237,7 +237,8 @@ void Map::Paint(sf::RenderWindow* window)
 void Map::ProcessEvent(sf::Event::EventType event, sf::RenderWindow* window)
 {
 	sf::Vector2f coordinates;
-	switch (event)
+
+	switch(event)
 	{
 	case sf::Event::MouseButtonPressed:
 		coordinates.x = (int)window->mapPixelToCoords(sf::Mouse::getPosition(*window)).x / 16;
@@ -249,6 +250,37 @@ void Map::ProcessEvent(sf::Event::EventType event, sf::RenderWindow* window)
 	default:
 		break;
 	}
+}
+
+void Map::CenterCamera(sf::RenderWindow* window)
+{
+	sf::View view(sf::Vector2f(current_map_.width_ * 8, current_map_.height_ * 8), sf::Vector2f(window->getSize()));
+	window->setView(view);
+}
+
+void Map::MoveCamera(sf::RenderWindow* window)
+{
+	sf::View view = window->getView();
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) && !sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+	{
+		view.move(-5, 0);
+	}
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) && !sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+	{
+		view.move(0, -5);
+	}
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) && !sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+	{
+		view.move(5, 0);
+	}
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) && !sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+	{
+		view.move(0, 5);
+	}
+	window->setView(view);
 }
 
 Map* Map::GetCurrentMap()

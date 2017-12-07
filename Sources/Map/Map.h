@@ -25,6 +25,8 @@ public:
 	static void DrawMap(sf::RenderWindow* window);
 	static void Paint(sf::RenderWindow* window);
 	static void ProcessEvent(sf::Event::EventType event, sf::RenderWindow* window);
+	static void CenterCamera(sf::RenderWindow* window);
+	static void MoveCamera(sf::RenderWindow* window);
 	static Map* GetCurrentMap();
 
 	static void SetTile(Tile* tile, const short x, const short y);
