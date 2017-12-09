@@ -24,14 +24,26 @@
     <ClInclude Include="targetver.h">
       <Filter>Sources\Main</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Utilities\Logger.h">
-      <Filter>Sources\Utilities</Filter>
-    </ClInclude>
     <ClInclude Include="Sources\Map\Map.h">
       <Filter>Sources\Map</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Algorithms\LeeAlgorithm.h">
       <Filter>Sources\Algorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Utilities\EventManager.h">
+      <Filter>Sources\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Map\Tile.h">
+      <Filter>Sources\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Map\TileType.h">
+      <Filter>Sources\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Map\MapController.h">
+      <Filter>Sources\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Map\MapRenderer.h">
+      <Filter>Sources\Map</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -41,14 +53,23 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Sources\Main</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Utilities\Logger.cpp">
-      <Filter>Sources\Utilities</Filter>
-    </ClCompile>
     <ClCompile Include="Sources\Map\Map.cpp">
       <Filter>Sources\Map</Filter>
     </ClCompile>
     <ClCompile Include="Sources\Algorithms\LeeAlgorithm.cpp">
       <Filter>Sources\Algorithms</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Utilities\EventManager.cpp">
+      <Filter>Sources\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Map\Tile.cpp">
+      <Filter>Sources\Map</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Map\MapController.cpp">
+      <Filter>Sources\Map</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Map\MapRenderer.cpp">
+      <Filter>Sources\Map</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
