@@ -1,41 +1,58 @@
 #pragma once
-#include "Tile.h"
+
+#define TILE_BLANK 0
+#define TILE_WALL 1
+#define TILE_START 2
+#define TILE_END 3
+#define TILE_CHECKED 4
+#define TILE_PATH 5
+
+struct Tile
+{
+	unsigned short x = 0;
+	unsigned short y = 0;
+	short type = 0;
+	unsigned int g_cost = 0;
+	unsigned int h_cost = 0;
+	unsigned int f_cost = 0;
+};
 
 class Map
 {
 public:
-	static void Create(const short width, const short height);
-	static void Load(const std::string path);
-	static void Save(const std::string path);
+	static void CreateMap(const short width, const short height);
+	static void LoadMap(const std::string path);
+	static void SaveMap(const std::string path);
+	static void DrawMap(sf::RenderWindow* window);
+	static void Paint(sf::RenderWindow* window);
 
-	static Map* GetMap();
+	static void ProcessEvent(sf::Event::EventType event, sf::RenderWindow* window);
+	static void CenterCamera(sf::RenderWindow* window);
+	static void MoveCamera(sf::RenderWindow* window);
 
-	short GetWidth() const;
-	short GetHeight() const;
+	static Map* GetCurrentMap();
+	static sf::Vector2f GetStartCoordinates();
+	static sf::Vector2f GetEndCoordinates();
 
-	sf::Vector2f GetStart() const;
-	sf::Vector2f GetEnd() const;
+	static void SetTile(Tile* tile, const short x, const short y);
+	static Tile* GetTile(const short x, const short y);
+	static Tile* GetTile(const sf::Vector2f position);
 
-	void SetStart(const short x, const short y);
-	void SetStart(const sf::Vector2f coordinates);
-	void SetEnd(const short x, const short y);
-	void SetEnd(const sf::Vector2f coordinates);
-
-	Tile* GetTile(const short x, const short y) const;
-	Tile* GetTile(const sf::Vector2f coordinates) const;
+	static short GetWidth();
+	static short GetHeight();
 
 private:
-	Map();
-	Map(const short width, const short height);
-	~Map();
-
-	static Map map_;
+	static Map current_map_;
 
 	short width_;
 	short height_;
+	short selected_tile_type_ = 0;
 
-	sf::Vector2f start_;
-	sf::Vector2f end_;
+	sf::Vector2f start_coordinates_;
+	sf::Vector2f end_coordinates_;
+
+	Map();
+	~Map();
 
 	std::vector<std::vector<Tile>> tiles_;
 };

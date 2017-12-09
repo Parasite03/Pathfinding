@@ -2,13 +2,47 @@
 #include <fstream>
 #include <sstream>
 
-Map Map::map_;
+Map Map::current_map_;
 
-std::vector<std::string> LoadFile(const std::string path)
+Map::Map()
 {
-	std::ifstream file(path);
+
+}
+
+Map::~Map()
+{
+
+}
+
+void Map::CreateMap(const short width, const short height)
+{
+	current_map_ = Map();
+	current_map_.width_ = width;
+	current_map_.height_ = height;
+
+	for (auto i = 0; i < height; ++i)
+	{
+		std::vector<Tile> vector;
+		for (auto j = 0; j < width; ++j)
+		{
+			Tile tile;
+			tile.x = j;
+			tile.y = i;
+			tile.type = 0;
+			vector.push_back(tile);
+		}
+		current_map_.tiles_.push_back(vector);
+	}
+}
+
+void Map::LoadMap(const std::string name)
+{
+	current_map_ = Map();
+
+	// Load the map from file to a vector of strings
+	std::ifstream file("./Data/Maps/" + name);
 	std::vector<std::string> strings;
-	
+
 	if (file.is_open())
 	{
 		while (!file.eof())
@@ -18,156 +52,294 @@ std::vector<std::string> LoadFile(const std::string path)
 			strings.push_back(string);
 		}
 	}
-	return strings;
-}
-
-std::vector<std::string> SplitString(std::string string, const char delimiter)
-{
-	std::vector<std::string> strings;
-	while (string.size() > 0)
+	else
 	{
-		if (std::count(string.begin(), string.end(), delimiter) > 0)
-		{
-			strings.push_back(string.substr(0, string.find(delimiter)));
-			string.erase(0, string.find(delimiter) + 1);
-		}
-		else
-		{
-			strings.push_back(string.substr(0, string.size()));
-			string.erase(0, string.size());
-		}
-		
+		Logger::Error("Failed to load map: " + name);
 	}
-	return strings;
-}
 
-Map::Map()
-{
-	
-}
-
-Map::Map(const short width, const short height)
-{
-	width_ = width;
-	height_ = height;
-}
-
-Map::~Map()
-{
-	
-}
-
-void Map::Create(const short width, const short height)
-{
-	map_ = Map(width, height);
-	for (auto i = 0; i < height; ++i)
-	{
-		std::vector<Tile> vector;
-		for (auto j = 0; j < width; ++j)
-			vector.push_back(Tile(j, i, TileType::Blank));
-		map_.tiles_.push_back(vector);
-	}
-}
-
-void Map::Load(const std::string path)
-{
-	// Load the map file into a vector of strings
-	std::vector<std::string> strings = LoadFile(path);
-
-	// Get map width and height from the first string and erase them from the string vector
-	std::vector<std::string> dimensions = SplitString(strings.at(0), ',');
+	// Load the dimensions of the map
+	std::string width = strings.at(0).substr(0, strings.at(0).find(","));
+	std::string height = strings.at(0).substr(strings.at(0).find(",") + 1, strings.at(0).size());
 	strings.erase(strings.begin());
-	short width = atoi(dimensions.at(0).c_str());
-	short height = atoi(dimensions.at(1).c_str());
 
-	// Initialize the map
-	map_ = Map(width, height);
-
-	// Fill the map with tiles
-	for (auto i = 0; i < strings.size(); i++)
+	current_map_.width_ = atoi(width.c_str());
+	current_map_.height_ = atoi(height.c_str());
+	
+	// Convert the map strings into Tile structs
+	for (auto i = 0; i < strings.size(); ++i)
 	{
 		std::vector<Tile> vector;
 		for (auto j = 0; j < strings.at(i).size(); ++j)
-			vector.push_back(Tile(j, i, strings.at(i).at(j)));
-		map_.tiles_.push_back(vector);
+		{
+			Tile tile;
+			switch(strings.at(i).at(j))
+			{
+			case '*':
+				tile.type = TILE_BLANK;
+				break;
+
+			case '#':
+				tile.type = TILE_WALL;
+				break;
+
+			case 'S':
+				tile.type = TILE_START;
+				current_map_.start_coordinates_ = sf::Vector2f(j, i);
+				break;
+
+			case 'E':
+				tile.type = TILE_END;
+				current_map_.end_coordinates_ = sf::Vector2f(j, i);
+				break;
+
+			default:
+				tile.type = TILE_BLANK;
+				break;
+			}
+
+			tile.x = j;
+			tile.y = i;
+
+			vector.push_back(tile);
+		}
+		current_map_.tiles_.push_back(vector);
 	}
 
 }
 
-void Map::Save(const std::string path)
+void Map::SaveMap(const std::string path)
 {
 	std::ofstream file(path);
-	
+
 	// Save the dimensions of the map
 	std::ostringstream oss;
-	oss << map_.width_ << ',' << map_.height_ << "\n";
-	file << oss.str();
+	oss << current_map_.width_ << ',' << current_map_.height_;
+	file << oss.str() << "\n";
 
 	// Save all the tiles
-	for (auto vector : map_.tiles_)
+	for (auto vector : current_map_.tiles_)
 	{
 		std::string string;
 		for (auto tile : vector)
-			string.push_back(tile.GetTypeChar());
+		{
+			switch (tile.type)
+			{
+			case TILE_BLANK:
+				string.push_back('*');
+				break;
+
+			case TILE_WALL:
+				string.push_back('#');
+				break;
+
+			case TILE_START:
+				string.push_back('S');
+				break;
+
+			case TILE_END:
+				string.push_back('E');
+				break;
+
+			default:
+				string.push_back('*');
+				break;
+			}
+		}
 		file << string << "\n";
 	}
 }
 
-Map* Map::GetMap()
+void Map::DrawMap(sf::RenderWindow* window)
 {
-	return &map_;
+	sf::Texture tile_texture;
+	tile_texture.loadFromFile("./Data/Textures/tile.png");
+	sf::Sprite sprite;
+	sprite.setTexture(tile_texture);
+
+	/*
+	* Tile types and colors
+	* 0 - blank   - white
+	* 1 - wall    - black
+	* 2 - start   - green
+	* 3 - end     - red
+	* 4 - checked - yellow
+	*/
+
+	for (auto vector : current_map_.tiles_)
+	{
+		for (auto tile : vector)
+		{
+			switch (tile.type)
+			{
+			case TILE_BLANK:
+				sprite.setColor(sf::Color::White);
+				break;
+
+			case TILE_WALL:
+				sprite.setColor(sf::Color::Black);
+				break;
+
+			case TILE_START:
+				sprite.setColor(sf::Color::Green);
+				break;
+
+			case TILE_END:
+				sprite.setColor(sf::Color::Red);
+				break;
+
+			case TILE_CHECKED:
+				sprite.setColor(sf::Color::Yellow);
+				break;
+
+			case TILE_PATH:
+				sprite.setColor(sf::Color::Cyan);
+				break;
+
+			default:
+				sprite.setColor(sf::Color::White);
+				break;
+			}
+
+			sf::Vector2f position(tile_texture.getSize().x * tile.x, tile_texture.getSize().y * tile.y);
+			sprite.setPosition(position);
+			window->draw(sprite);
+		}
+	}
 }
 
-short Map::GetWidth() const
+void Map::Paint(sf::RenderWindow* window)
 {
-	return width_;
+	short painting_type;
+	sf::Vector2f coordinates;
+	coordinates.x = (int)window->mapPixelToCoords(sf::Mouse::getPosition(*window)).x / 16;
+	coordinates.y = (int)window->mapPixelToCoords(sf::Mouse::getPosition(*window)).y / 16;
+
+	if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+	{
+		if (current_map_.selected_tile_type_ == TILE_BLANK)
+			painting_type = TILE_WALL;
+		else
+			painting_type = TILE_BLANK;
+
+		
+		if (coordinates.x >= 0 && coordinates.y >= 0 && coordinates.x < current_map_.width_ && coordinates.y < current_map_.height_)
+			GetTile(coordinates)->type = painting_type;
+
+	}
+
+	if (sf::Mouse::isButtonPressed(sf::Mouse::Right))
+	{
+		if (current_map_.selected_tile_type_ == TILE_START)
+			painting_type = TILE_END;
+		else
+			painting_type = TILE_START;
+
+		if (coordinates.x >= 0 && coordinates.y >= 0 && coordinates.x < current_map_.width_ && coordinates.y < current_map_.height_)
+		{
+			if (painting_type == TILE_START)
+			{
+				if (Map::GetTile(current_map_.start_coordinates_)->type == TILE_START)
+					Map::GetTile(current_map_.start_coordinates_)->type = TILE_BLANK;
+				current_map_.start_coordinates_ = coordinates;
+			}
+			else if (painting_type == TILE_END)
+			{
+				if (Map::GetTile(current_map_.end_coordinates_)->type == TILE_END)
+					Map::GetTile(current_map_.end_coordinates_)->type = TILE_BLANK;
+				current_map_.end_coordinates_ = coordinates;
+			}
+
+			GetTile(coordinates)->type = painting_type;
+		}
+	}
 }
 
-short Map::GetHeight() const
+void Map::ProcessEvent(sf::Event::EventType event, sf::RenderWindow* window)
 {
-	return height_;
+	sf::Vector2f coordinates;
+
+	switch(event)
+	{
+	case sf::Event::MouseButtonPressed:
+		coordinates.x = (int)window->mapPixelToCoords(sf::Mouse::getPosition(*window)).x / 16;
+		coordinates.y = (int)window->mapPixelToCoords(sf::Mouse::getPosition(*window)).y / 16;
+		if (coordinates.x >= 0 && coordinates.y >= 0 && coordinates.x < current_map_.width_ && coordinates.y < current_map_.height_)
+			current_map_.selected_tile_type_ = GetTile(coordinates)->type;
+		break;
+
+	default:
+		break;
+	}
 }
 
-sf::Vector2f Map::GetStart() const
+void Map::CenterCamera(sf::RenderWindow* window)
 {
-	return start_;
+	sf::View view(sf::Vector2f(current_map_.width_ * 8, current_map_.height_ * 8), sf::Vector2f(window->getSize()));
+	window->setView(view);
 }
 
-sf::Vector2f Map::GetEnd() const
+void Map::MoveCamera(sf::RenderWindow* window)
 {
-	return end_;
+	sf::View view = window->getView();
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) && !sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+	{
+		view.move(-5, 0);
+	}
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) && !sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+	{
+		view.move(0, -5);
+	}
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) && !sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+	{
+		view.move(5, 0);
+	}
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) && !sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+	{
+		view.move(0, 5);
+	}
+	window->setView(view);
 }
 
-void Map::SetStart(const short x, const short y)
+Map* Map::GetCurrentMap()
 {
-	start_.x = x;
-	start_.y = y;
+	return &current_map_;
 }
 
-void Map::SetStart(const sf::Vector2f coordinates)
+sf::Vector2f Map::GetStartCoordinates()
 {
-	start_ = coordinates;
+	return current_map_.start_coordinates_;
 }
 
-void Map::SetEnd(const short x, const short y)
+sf::Vector2f Map::GetEndCoordinates()
 {
-	end_.x = x;
-	end_.y = y;
+	return current_map_.end_coordinates_;
 }
 
-void Map::SetEnd(const sf::Vector2f coordinates)
+void Map::SetTile(Tile* tile, const short x, const short y)
 {
-	end_ = coordinates;
+	current_map_.tiles_.at(x).at(y) = *tile;
 }
 
-Tile* Map::GetTile(const short x, const short y) const
+Tile* Map::GetTile(const short x, const short y)
 {
-	return &map_.tiles_.at(y).at(x);
+	return &current_map_.tiles_.at(y).at(x);
 }
 
-Tile* Map::GetTile(const sf::Vector2f coordinates) const
+Tile* Map::GetTile(const sf::Vector2f position)
 {
-	return &map_.tiles_.at(coordinates.y).at(coordinates.x);
+	return &current_map_.tiles_.at(position.y).at(position.x);
 }
 
+short Map::GetWidth()
+{
+	return current_map_.width_;
+}
+
+short Map::GetHeight()
+{
+	return current_map_.height_;
+}
 
