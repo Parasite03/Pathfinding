@@ -1,4 +1,5 @@
 #include "EventManager.h"
+#include "../GUI/GuiManager.h"
 
 std::vector<sf::Event> EventManager::events_;
 sf::RenderWindow* EventManager::window_;
@@ -18,7 +19,10 @@ void EventManager::Update()
 	events_.clear();
 	sf::Event event;
 	while (window_->pollEvent(event))
+	{
 		events_.push_back(event);
+		GuiManager::HandleEvent(event);
+	}
 }
 
 bool EventManager::GetEvent(const sf::Event::EventType event_type)

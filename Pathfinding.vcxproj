@@ -171,7 +171,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Clock.h" />
     <ClInclude Include="Sources\Algorithms\LeeAlgorithm.h" />
+    <ClInclude Include="Sources\GUI\GuiManager.h" />
     <ClInclude Include="Sources\Map\Map.h" />
     <ClInclude Include="Sources\Map\MapController.h" />
     <ClInclude Include="Sources\Map\MapRenderer.h" />
@@ -184,6 +186,7 @@
   <ItemGroup>
     <ClCompile Include="Pathfinding.cpp" />
     <ClCompile Include="Sources\Algorithms\LeeAlgorithm.cpp" />
+    <ClCompile Include="Sources\GUI\GuiManager.cpp" />
     <ClCompile Include="Sources\Map\Map.cpp" />
     <ClCompile Include="Sources\Map\MapController.cpp" />
     <ClCompile Include="Sources\Map\MapRenderer.cpp" />
