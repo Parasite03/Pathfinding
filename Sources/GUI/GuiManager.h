@@ -1,26 +1,39 @@
 #pragma once
 #include "SFGUI/SFGUI.hpp"
-#include "SFGUI/Window.hpp"
-#include "SFGUI/Desktop.hpp"
-#include "SFGUI/Button.hpp"
+#include "SFGUI/Widgets.hpp"
 
 class GuiManager
 {
 public:
-	static void Initialize(sf::RenderWindow* render_window);
-	static void HandleEvent(const sf::Event event);
-	static void Update();
-
-private:
 	GuiManager();
+	GuiManager(sf::RenderWindow* render_window);
 	~GuiManager();
 
-	static sf::RenderWindow* render_window_;
+	void HandleEvent(const sf::Event event);
+	void Update();
+	sfg::SFGUI GuiManager::GetSfgui();
 
-	static sfg::SFGUI sfgui_;
-	static sfg::Window::Ptr window_;
-	static sfg::Desktop desktop_;
+private:
+	// Render window pointer
+	sf::RenderWindow* render_window_;
 
-	static sfg::Button::Ptr button_;
+	// Core things
+	sfg::SFGUI sfgui_;
+	sfg::Desktop desktop_;
+	sfg::Box::Ptr box_;
+	sfg::Window::Ptr window_;
+
+	//Painting Window
+	sfg::Box::Ptr painting_box_;
+	sfg::Button::Ptr paint_blank_button_;
+	sfg::Button::Ptr paint_wall_button_;
+	sfg::Button::Ptr paint_start_button_;
+	sfg::Button::Ptr paint_end_button_;
+	
+	// Map management window
+	sfg::Box::Ptr map_management_box_;
+	sfg::Button::Ptr create_map_button_;
+	sfg::Button::Ptr load_map_button_;
+	sfg::Button::Ptr save_map_button_;
 };
 

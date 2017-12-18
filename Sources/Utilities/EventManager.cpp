@@ -3,6 +3,7 @@
 
 std::vector<sf::Event> EventManager::events_;
 sf::RenderWindow* EventManager::window_;
+GuiManager* EventManager::gui_manager_;
 
 EventManager::EventManager()
 {
@@ -21,7 +22,7 @@ void EventManager::Update()
 	while (window_->pollEvent(event))
 	{
 		events_.push_back(event);
-		GuiManager::HandleEvent(event);
+		gui_manager_->HandleEvent(event);
 	}
 }
 
@@ -32,7 +33,8 @@ bool EventManager::GetEvent(const sf::Event::EventType event_type)
 	return false;
 }
 
-void EventManager::Initialize(sf::RenderWindow* window)
+void EventManager::Initialize(sf::RenderWindow* window, GuiManager* gui_manager)
 {
 	window_ = window;
+	gui_manager_ = gui_manager;
 }
