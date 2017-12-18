@@ -1,7 +1,6 @@
 #include "LeeAlgorithm.h"
-#include "../Map/Map.h"
 
-LeeAlgorithm  LeeAlgorithm::current_algorithm_;
+LeeAlgorithm LeeAlgorithm::algorithm_;
 
 LeeAlgorithm::LeeAlgorithm()
 {
@@ -13,152 +12,150 @@ LeeAlgorithm::~LeeAlgorithm()
 
 }
 
-void LeeAlgorithm::FindPath(sf::Vector2f start_position, sf::Vector2f end_position, short direction_count)
+void LeeAlgorithm::FindPath(sf::Vector2f start_position, sf::Vector2f end_position, unsigned char number_of_directions)
 {
+	// Initialization
+	algorithm_ = LeeAlgorithm();
 
-	current_algorithm_ = LeeAlgorithm();
+	if (Map::GetMap()->GetTile(Map::GetMap()->GetStart())->GetType() == TileType::Wall ||
+		Map::GetMap()->GetTile(Map::GetMap()->GetEnd())->GetType() == TileType::Wall) return;
 
-	SetStartPosition(start_position);
-	SetEndPosition(end_position);
+	// Set direction count
+	algorithm_.SetDirectionCount(number_of_directions);
 
-	current_algorithm_.direction_count_ = direction_count;
-
-	std::vector<short> y_direction;
-	std::vector<short> x_direction;
-
-	if (current_algorithm_.direction_count_ == 4)
-	{
-		y_direction = { 1, 0, -1, 0 };
-		x_direction = { 0, 1, 0, -1 };
-	}
-	else
-		if (current_algorithm_.direction_count_ == 8)
-		{
-			y_direction = { 1, 1, 0, -1, -1, -1, 0, 1 };
-			x_direction = { 0, 1, 1, 1, 0, -1, -1, -1 };
-		}
+	bool open_tiles;
+	short current_distance = 0;
 
 	LeeAlgorithm::ResetPath();
 
-	bool stop;
-	short distance = 0;
-	sf::Vector2f path;
+	algorithm_.tile_distace_.at(Map::GetMap()->GetStart().x).at(Map::GetMap()->GetStart().y) = current_distance;
 
-	Map::GetTile(LeeAlgorithm::GetStartPosition())->g_cost = distance;
-
+	// Wave expansion
 	do {
-		stop = true;
-		for (auto y = 0; y < Map::GetHeight(); ++y)
-			for (auto x = 0; x < Map::GetWidth(); ++x)
+		open_tiles = true;
+
+		for (auto y = 0; y < Map::GetMap()->GetHeight(); ++y)
+			for (auto x = 0; x < Map::GetMap()->GetWidth(); ++x)
 			{
-				if (Map::GetTile(x, y)->g_cost == distance)
+				if (algorithm_.tile_distace_.at(x).at(y) == current_distance)
 				{
-					for (auto i = 0; i < LeeAlgorithm::GetDirectionCount(); ++i)
+					// Mark all unlabeled neighbors of points marked with i with i + 1
+					
+					for (auto i = 0; i < algorithm_.GetNumberOfDirections(); ++i)
 					{
-						int iy = y + y_direction.at(i), ix = x + x_direction.at(i);
-						if (iy >= 0 && ix >= 0 && iy < Map::GetHeight() && ix < Map::GetWidth() && Map::GetTile(ix, iy)->g_cost == -1)
+						short delta_y = y + algorithm_.tile_offset_by_y_.at(i),
+						      delta_x = x + algorithm_.tile_offset_by_x_.at(i);
+						
+						if (delta_y >= 0 && delta_x >= 0 && delta_y < Map::GetMap()->GetHeight() && delta_x < Map::GetMap()->GetWidth() 
+							&& algorithm_.tile_distace_.at(delta_x).at(delta_y) == -1)
 						{
-							stop = false;
-							Map::GetTile(ix, iy)->g_cost = distance + 1;
-							Map::GetTile(ix, iy)->type = TILE_CHECKED;
+							open_tiles = false;
+							algorithm_.tile_distace_.at(delta_x).at(delta_y) = current_distance + 1;
+							//Map::GetMap()->GetTile(delta_x, delta_y)->SetType(TileType::Checked);
 						}
 					}
 				}
 			}
-		distance++;
-	} while (!stop && Map::GetTile(LeeAlgorithm::GetEndPosition())->g_cost == -1);
+		current_distance++;
+	} while (!open_tiles && algorithm_.tile_distace_.at(Map::GetMap()->GetEnd().x).at(Map::GetMap()->GetEnd().y) == -1);
 
-	if (Map::GetTile(LeeAlgorithm::GetEndPosition())->g_cost == -1) return;
+	if (algorithm_.tile_distace_.at(Map::GetMap()->GetEnd().x).at(Map::GetMap()->GetEnd().y) == -1) return;
 
-	// Trace path
+	LeeAlgorithm::SetBackTrace();
+	LeeAlgorithm::ShowPath();
 
-	current_algorithm_.path_length_ = Map::GetTile(LeeAlgorithm::GetEndPosition())->g_cost;
-	path = LeeAlgorithm::GetEndPosition();
-	distance = current_algorithm_.path_length_;
+}
 
-	while (distance > 0)
+void LeeAlgorithm::SetBackTrace()
+{
+	algorithm_.path_length_ = algorithm_.tile_distace_.at(Map::GetMap()->GetEnd().x).at(Map::GetMap()->GetEnd().y);
+	sf::Vector2f current_tile_position = Map::GetMap()->GetEnd();
+
+	short current_distance = algorithm_.path_length_;
+
+	while (current_distance > 0)
 	{
-		current_algorithm_.path_.push_back(path);
-		distance--;
-		for (auto i = 0; i < LeeAlgorithm::GetDirectionCount(); ++i)
+		algorithm_.path_map.push_back(current_tile_position);
+		current_distance--;
+
+		for (auto i = 0; i < algorithm_.GetNumberOfDirections(); ++i)
 		{
-			int iy = path.y + y_direction.at(i), ix = path.x + x_direction.at(i);
-			if (iy >= 0 && ix >= 0 && iy < Map::GetHeight() && ix < Map::GetWidth() && Map::GetTile(ix, iy)->g_cost == distance)
+			short delta_y = current_tile_position.y + algorithm_.tile_offset_by_y_.at(i),
+				  delta_x = current_tile_position.x + algorithm_.tile_offset_by_x_.at(i);
+
+			if (delta_y >= 0 && delta_x >= 0 && delta_y < Map::GetMap()->GetHeight() && delta_x < Map::GetMap()->GetWidth() 
+				&& algorithm_.tile_distace_.at(delta_x).at(delta_y) == current_distance)
 			{
-				path.y += y_direction[i];
-				path.x += x_direction[i];
+				current_tile_position.y = delta_y;
+				current_tile_position.x = delta_x;
 				break;
 			}
 		}
 	}
 
-	current_algorithm_.path_.push_back(LeeAlgorithm::GetStartPosition());
-
-	LeeAlgorithm::ShowPath();
-
-	return;
+	algorithm_.path_map.push_back(Map::GetMap()->GetStart());
 
 }
 
 void LeeAlgorithm::ShowPath()
 {
-	Map::GetTile(LeeAlgorithm::GetStartPosition())->type = TILE_START;
-	Map::GetTile(LeeAlgorithm::GetEndPosition())->type = TILE_END;
+	Map::GetMap()->GetTile(Map::GetMap()->GetStart())->SetType(TileType::Start);
+	Map::GetMap()->GetTile(Map::GetMap()->GetEnd())->SetType(TileType::End);
 
-	for (auto i = 1; i < current_algorithm_.path_length_; ++i)
+	for (auto i = 1; i < algorithm_.path_length_; ++i)
 	{
-		Map::GetTile(current_algorithm_.path_.at(i))->type = TILE_PATH;
+		Map::GetMap()->GetTile(algorithm_.path_map.at(i))->SetType(TileType::Path);
 	}
+}
+
+void LeeAlgorithm::SetDirectionCount(unsigned char number_of_directions)
+{
+	algorithm_.SetNumberOfDirections(number_of_directions);
+
+	if (algorithm_.GetNumberOfDirections() == 4)
+	{
+		tile_offset_by_x_ = { 1, 0, -1, 0 };
+		tile_offset_by_y_ = { 0, 1, 0, -1 };
+	}
+	else
+		if (algorithm_.GetNumberOfDirections() == 8)
+		{
+			tile_offset_by_x_ = { 1, 1, 0, -1, -1, -1, 0, 1 };
+			tile_offset_by_y_ = { 0, 1, 1, 1, 0, -1, -1, -1 };
+		}
+		
 }
 
 void LeeAlgorithm::ResetPath()
 {
-	for (auto y = 0; y < Map::GetHeight(); ++y)
-		for (auto x = 0; x < Map::GetWidth(); ++x)
+	algorithm_.tile_distace_.clear();
+
+	for (auto y = 0; y < Map::GetMap()->GetHeight(); ++y)
+	{
+		std::vector<int> vector;
+		for (auto x = 0; x < Map::GetMap()->GetWidth(); ++x)
 		{
-			if (Map::GetTile(x, y)->type == TILE_CHECKED || Map::GetTile(x, y)->type == TILE_PATH)
-				Map::GetTile(x, y)->type = TILE_BLANK;
-
-			if (Map::GetTile(x, y)->type == TILE_WALL)
-				Map::GetTile(x, y)->g_cost = -2;
+			if (Map::GetMap()->GetTile(x, y)->GetType() == TileType::Wall)
+				vector.push_back(-2);
 			else
-				Map::GetTile(x, y)->g_cost = -1;
+				vector.push_back(-1);
 		}
+		algorithm_.tile_distace_.push_back(vector);
+	}
 }
 
-void LeeAlgorithm::SetStartPosition(const short x, const short y)
+void LeeAlgorithm::SetNumberOfDirections(unsigned char number_of_directions)
 {
-	current_algorithm_.start_position_.x = x;
-	current_algorithm_.start_position_.y = y;
+	number_of_directions_ = number_of_directions;
 }
 
-void LeeAlgorithm::SetStartPosition(const sf::Vector2f position)
+unsigned char LeeAlgorithm::GetNumberOfDirections()
 {
-	current_algorithm_.start_position_ = position;
+	return number_of_directions_;
 }
 
-sf::Vector2f LeeAlgorithm::GetStartPosition()
+LeeAlgorithm* LeeAlgorithm::GetAlgorithm()
 {
-	return current_algorithm_.start_position_;
+	return &algorithm_;
 }
 
-void LeeAlgorithm::SetEndPosition(const short x, const short y)
-{
-	current_algorithm_.end_position_.x = x;
-	current_algorithm_.end_position_.y = y;
-}
-
-void LeeAlgorithm::SetEndPosition(const sf::Vector2f position)
-{
-	current_algorithm_.end_position_ = position;
-}
-
-sf::Vector2f LeeAlgorithm::GetEndPosition()
-{
-	return current_algorithm_.end_position_;
-}
-
-short LeeAlgorithm::GetDirectionCount()
-{
-	return current_algorithm_.direction_count_;
-}

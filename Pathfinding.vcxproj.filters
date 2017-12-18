@@ -10,11 +10,11 @@
     <Filter Include="Sources\Utilities">
       <UniqueIdentifier>{3b22230e-627b-449b-8f23-e9a44b5e7d5c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Sources\Map">
-      <UniqueIdentifier>{e5900ba8-19eb-4527-86a3-946e32374649}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Sources\Algorithms">
       <UniqueIdentifier>{3564d6b7-f7d3-4dc0-8a8e-1316f5ab778e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Main\Map">
+      <UniqueIdentifier>{e5900ba8-19eb-4527-86a3-946e32374649}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -25,7 +25,7 @@
       <Filter>Sources\Main</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Map\Map.h">
-      <Filter>Sources\Map</Filter>
+      <Filter>Sources\Main\Map</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Algorithms\LeeAlgorithm.h">
       <Filter>Sources\Algorithms</Filter>
@@ -34,16 +34,16 @@
       <Filter>Sources\Utilities</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Map\Tile.h">
-      <Filter>Sources\Map</Filter>
+      <Filter>Sources\Main\Map</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Map\TileType.h">
-      <Filter>Sources\Map</Filter>
+      <Filter>Sources\Main\Map</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Map\MapController.h">
-      <Filter>Sources\Map</Filter>
+      <Filter>Sources\Main\Map</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Map\MapRenderer.h">
-      <Filter>Sources\Map</Filter>
+      <Filter>Sources\Main\Map</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -54,7 +54,7 @@
       <Filter>Sources\Main</Filter>
     </ClCompile>
     <ClCompile Include="Sources\Map\Map.cpp">
-      <Filter>Sources\Map</Filter>
+      <Filter>Sources\Main\Map</Filter>
     </ClCompile>
     <ClCompile Include="Sources\Algorithms\LeeAlgorithm.cpp">
       <Filter>Sources\Algorithms</Filter>
@@ -63,13 +63,13 @@
       <Filter>Sources\Utilities</Filter>
     </ClCompile>
     <ClCompile Include="Sources\Map\Tile.cpp">
-      <Filter>Sources\Map</Filter>
+      <Filter>Sources\Main\Map</Filter>
     </ClCompile>
     <ClCompile Include="Sources\Map\MapController.cpp">
-      <Filter>Sources\Map</Filter>
+      <Filter>Sources\Main\Map</Filter>
     </ClCompile>
     <ClCompile Include="Sources\Map\MapRenderer.cpp">
-      <Filter>Sources\Map</Filter>
+      <Filter>Sources\Main\Map</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
