@@ -78,6 +78,9 @@
     <ClInclude Include="Sources\Gui\Gui.h">
       <Filter>Sources\Gui</Filter>
     </ClInclude>
+    <ClInclude Include="Sources\Utilities\FileBrowser.h">
+      <Filter>Sources\Utilities</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Pathfinding.cpp">
@@ -118,6 +121,9 @@
     </ClCompile>
     <ClCompile Include="Sources\Gui\Gui.cpp">
       <Filter>Sources\Gui</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Utilities\FileBrowser.cpp">
+      <Filter>Sources\Utilities</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

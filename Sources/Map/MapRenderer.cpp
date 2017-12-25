@@ -26,6 +26,7 @@ void MapRenderer::Initialize(sf::RenderWindow* window)
 
 void MapRenderer::Draw()
 {
+	// Get the coordinates of the tiles in the top-left and bottom-right corners of the window
 	sf::Vector2f start_coordinates = window_->mapPixelToCoords({ 0, 0 });
 	sf::Vector2f end_coordinates = window_->mapPixelToCoords(static_cast<sf::Vector2i>(window_->getSize()));
 
@@ -49,6 +50,7 @@ void MapRenderer::Draw()
 	else
 		end_coordinates.y = ceil(end_coordinates.y /= 16);
 
+	// Draw the tiles
 	for (auto i = start_coordinates.y; i < end_coordinates.y; i++)
 	{
 		for (auto j = start_coordinates.x; j < end_coordinates.x; j++)

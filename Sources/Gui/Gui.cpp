@@ -1,10 +1,12 @@
 #include "Gui.h"
+#include <Map>
 
 #include "../../Clock.h"
 #include "../ImGui/imgui.h"
 #include "../ImGui/imgui-SFML.h"
 #include "../Map/MapRenderer.h"
 #include "../Map/Map.h"
+#include "../Utilities/FileBrowser.h"
 
 sf::RenderWindow* Gui::window_;
 
@@ -12,7 +14,7 @@ sf::Texture Gui::wall_;
 sf::Texture Gui::blank_;
 sf::Texture Gui::start_;
 sf::Texture Gui::end_;
-char Gui::width[8], Gui::height[8];
+char width[8] = "50", height[8] = "50";
 
 Gui::Gui()
 {
@@ -39,6 +41,7 @@ void Gui::Update()
 {
 	ImGui::SFML::Update(*window_, kClock.restart());
 
+	// Painting window
 	ImGui::Begin("Paint", 0, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse);
 	ImGui::SetWindowPos({5, 5});
 
@@ -64,8 +67,9 @@ void Gui::Update()
 
 	ImGui::End();
 
+	// Map window
 	ImGui::Begin("Map", 0, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse);
-	ImGui::SetWindowPos({ 65, 5 });
+	ImGui::SetWindowPos({ 68, 5 });
 
 	if (ImGui::Button("New"))
 	{
@@ -75,14 +79,39 @@ void Gui::Update()
 	ImGui::InputText("Width", width, 8);
 	ImGui::InputText("Height", height, 8);
 
-	if (ImGui::Button("Save"))
-	{
-		Map::Save("new_map.txt");
-	}
-
 	if (ImGui::Button("Load"))
 	{
-		Map::Load("./Data/Maps/test_map.txt");
+		std::string path = FileBrowser::OpenFile("Load Map...");
+		if (path != std::string())
+			Map::Load(path);
+	}
+
+	ImGui::SameLine();
+	if (ImGui::Button("Save"))
+	{
+		std::string path = FileBrowser::SaveFile("Save Map...");
+		if (path != std::string())
+			Map::Save(path);
+	}
+
+	ImGui::End();
+
+	// Algorithm window
+
+	ImGui::Begin("Algorithms", 0, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse);
+
+	ImGui::SetWindowPos({ 343, 5 });
+
+	if (ImGui::BeginCombo("", "Select Algorithm"))
+	{
+		//if (ImGui::Selectable())
+
+		ImGui::EndCombo();
+	}
+
+	if (ImGui::Button("Find Path"))
+	{
+		
 	}
 
 	ImGui::End();

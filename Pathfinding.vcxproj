@@ -187,6 +187,7 @@
     <ClInclude Include="Sources\Map\Tile.h" />
     <ClInclude Include="Sources\Map\TileType.h" />
     <ClInclude Include="Sources\Utilities\EventManager.h" />
+    <ClInclude Include="Sources\Utilities\FileBrowser.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
@@ -203,6 +204,7 @@
     <ClCompile Include="Sources\Map\MapRenderer.cpp" />
     <ClCompile Include="Sources\Map\Tile.cpp" />
     <ClCompile Include="Sources\Utilities\EventManager.cpp" />
+    <ClCompile Include="Sources\Utilities\FileBrowser.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
