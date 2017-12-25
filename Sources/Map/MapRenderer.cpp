@@ -26,12 +26,32 @@ void MapRenderer::Initialize(sf::RenderWindow* window)
 
 void MapRenderer::Draw()
 {
-	//sf::Vector2f start_coordinates = { window_->mapPixelToCoords({0, 0}).x / 16, window_->mapPixelToCoords({ 0, 0 }).y / 16 };
-	//sf::Vector2f end_coordinates = window_->mapPixelToCoords({ window_->getSize().x / 16, window_->getSize().y /16 });
+	sf::Vector2f start_coordinates = window_->mapPixelToCoords({ 0, 0 });
+	sf::Vector2f end_coordinates = window_->mapPixelToCoords(static_cast<sf::Vector2i>(window_->getSize()));
 
-	for (auto i = 0; i < Map::GetMap()->GetHeight(); i++)
+	if (start_coordinates.x < 0)
+		start_coordinates.x = 0;
+	else
+		start_coordinates.x = floor(start_coordinates.x /= 16);
+
+	if (start_coordinates.y < 0)
+		start_coordinates.y = 0;
+	else
+		start_coordinates.y = floor(start_coordinates.y /= 16);
+
+	if (end_coordinates.x >= Map::GetMap()->GetWidth() * 16)
+		end_coordinates.x = Map::GetMap()->GetWidth() - 1;
+	else
+		end_coordinates.x = ceil(end_coordinates.x /= 16);
+
+	if (end_coordinates.y >= Map::GetMap()->GetHeight() * 16)
+		end_coordinates.y = Map::GetMap()->GetHeight() - 1;
+	else
+		end_coordinates.y = ceil(end_coordinates.y /= 16);
+
+	for (auto i = start_coordinates.y; i < end_coordinates.y; i++)
 	{
-		for (auto j = 0; j < Map::GetMap()->GetWidth(); j++)
+		for (auto j = start_coordinates.x; j < end_coordinates.x; j++)
 		{
 			sf::Vector2f position(tile_texture_.getSize().x * Map::GetMap()->GetTile(j, i)->GetX(), tile_texture_.getSize().y * Map::GetMap()->GetTile(j, i)->GetY());
 			tile_sprite_.setPosition(position);

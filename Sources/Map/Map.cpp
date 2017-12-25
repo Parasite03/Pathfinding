@@ -93,7 +93,7 @@ void Map::Load(const std::string path)
 			vector.push_back(Tile(j, i, strings.at(i).at(j)));
 		map_.tiles_.push_back(vector);
 	}
-
+	MapController::CenterView();
 }
 
 void Map::Save(const std::string path)
@@ -113,6 +113,7 @@ void Map::Save(const std::string path)
 			string.push_back(tile.GetTypeChar());
 		file << string << "\n";
 	}
+	MapController::CenterView();
 }
 
 Map* Map::GetMap()
