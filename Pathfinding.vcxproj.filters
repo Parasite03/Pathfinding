@@ -16,8 +16,11 @@
     <Filter Include="Sources\Algorithms">
       <UniqueIdentifier>{3564d6b7-f7d3-4dc0-8a8e-1316f5ab778e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Sources\GUI">
-      <UniqueIdentifier>{52bdcedd-ec62-4af0-8463-6acf67c5a233}</UniqueIdentifier>
+    <Filter Include="Sources\ImGui">
+      <UniqueIdentifier>{88842443-c6d4-4e56-acbd-d65779d77218}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Gui">
+      <UniqueIdentifier>{56c87abf-d019-420e-bbb4-c5d5cb002abe}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -48,11 +51,32 @@
     <ClInclude Include="Sources\Map\MapRenderer.h">
       <Filter>Sources\Map</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\GUI\GuiManager.h">
-      <Filter>Sources\GUI</Filter>
-    </ClInclude>
     <ClInclude Include="Clock.h">
       <Filter>Sources\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\ImGui\imgui_internal.h">
+      <Filter>Sources\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\ImGui\imgui-SFML.h">
+      <Filter>Sources\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\ImGui\stb_rect_pack.h">
+      <Filter>Sources\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\ImGui\stb_textedit.h">
+      <Filter>Sources\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\ImGui\stb_truetype.h">
+      <Filter>Sources\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\ImGui\imconfig.h">
+      <Filter>Sources\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\ImGui\imgui.h">
+      <Filter>Sources\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Gui\Gui.h">
+      <Filter>Sources\Gui</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -80,8 +104,20 @@
     <ClCompile Include="Sources\Map\MapRenderer.cpp">
       <Filter>Sources\Map</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\GUI\GuiManager.cpp">
-      <Filter>Sources\GUI</Filter>
+    <ClCompile Include="Sources\ImGui\imgui_draw.cpp">
+      <Filter>Sources\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\ImGui\imgui-SFML.cpp">
+      <Filter>Sources\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\ImGui\imgui.cpp">
+      <Filter>Sources\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\ImGui\imgui_demo.cpp">
+      <Filter>Sources\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Gui\Gui.cpp">
+      <Filter>Sources\Gui</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

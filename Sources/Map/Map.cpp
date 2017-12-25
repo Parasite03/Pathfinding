@@ -1,6 +1,7 @@
 #include "Map.h"
 #include <fstream>
 #include <sstream>
+#include "MapController.h"
 
 Map Map::map_;
 
@@ -67,6 +68,7 @@ void Map::Create(const short width, const short height)
 			vector.push_back(Tile(j, i, TileType::Blank));
 		map_.tiles_.push_back(vector);
 	}
+	MapController::CenterView();
 }
 
 void Map::Load(const std::string path)
