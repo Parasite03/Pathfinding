@@ -7,6 +7,7 @@
 #include "../Map/MapRenderer.h"
 #include "../Map/Map.h"
 #include "../Utilities/FileBrowser.h"
+#include "../Algorithms/LeeAlgorithm.h"
 
 sf::RenderWindow* Gui::window_;
 
@@ -14,7 +15,10 @@ sf::Texture Gui::wall_;
 sf::Texture Gui::blank_;
 sf::Texture Gui::start_;
 sf::Texture Gui::end_;
+Algorithm Gui::selected_algorithm_;
 char width[8] = "50", height[8] = "50";
+
+std::map<Algorithm, std::string> algorithms;
 
 Gui::Gui()
 {
@@ -35,35 +39,30 @@ void Gui::Initialize(sf::RenderWindow* window)
 	blank_.loadFromFile("./Data/Textures/blank.png");
 	start_.loadFromFile("./Data/Textures/start.png");
 	end_.loadFromFile("./Data/Textures/end.png");
+
+	algorithms.emplace(Algorithm::Lee, "Lee Algorithm");
 }
 
 void Gui::Update()
 {
 	ImGui::SFML::Update(*window_, kClock.restart());
 
+	// Disable imgui.ini
+	ImGuiIO& io = ImGui::GetIO();
+	io.IniFilename = NULL;
+
 	// Painting window
 	ImGui::Begin("Paint", 0, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse);
 	ImGui::SetWindowPos({5, 5});
 
 	if (ImGui::ImageButton(wall_)) 
-	{
 		MapRenderer::SetPaintingMode(TileType::Wall);
-	}
-
 	if (ImGui::ImageButton(blank_))
-	{
 		MapRenderer::SetPaintingMode(TileType::Blank);
-	}
-
 	if (ImGui::ImageButton(start_))
-	{
 		MapRenderer::SetPaintingMode(TileType::Start);
-	}
-
 	if (ImGui::ImageButton(end_))
-	{
 		MapRenderer::SetPaintingMode(TileType::End);
-	}
 
 	ImGui::End();
 
@@ -102,16 +101,29 @@ void Gui::Update()
 
 	ImGui::SetWindowPos({ 343, 5 });
 
-	if (ImGui::BeginCombo("", "Select Algorithm"))
+	if (ImGui::BeginCombo("", algorithms.at(selected_algorithm_).c_str()))
 	{
-		//if (ImGui::Selectable())
-
+		for (auto algorithm : algorithms)
+			if (ImGui::Selectable(algorithm.second.c_str(), algorithm.first == selected_algorithm_))
+			{
+				selected_algorithm_ = algorithm.first;
+				// TODO: call the algorithm here
+			}
+		
 		ImGui::EndCombo();
 	}
 
 	if (ImGui::Button("Find Path"))
 	{
-		
+		switch(selected_algorithm_)
+		{
+		case Algorithm::Lee:
+			std::cout << "Found Path" << std::endl;
+			break;
+			
+		default:
+			break;
+		}
 	}
 
 	ImGui::End();
