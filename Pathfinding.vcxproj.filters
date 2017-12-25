@@ -81,6 +81,7 @@
     <ClInclude Include="Sources\Utilities\FileBrowser.h">
       <Filter>Sources\Utilities</Filter>
     </ClInclude>
+    <ClInclude Include="Sources\Algorithms\AlgorithmHandler.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Pathfinding.cpp">
@@ -125,5 +126,6 @@
     <ClCompile Include="Sources\Utilities\FileBrowser.cpp">
       <Filter>Sources\Utilities</Filter>
     </ClCompile>
+    <ClCompile Include="Sources\Algorithms\AlgorithmHandler.cpp" />
   </ItemGroup>
 </Project>

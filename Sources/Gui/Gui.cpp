@@ -107,7 +107,6 @@ void Gui::Update()
 			if (ImGui::Selectable(algorithm.second.c_str(), algorithm.first == selected_algorithm_))
 			{
 				selected_algorithm_ = algorithm.first;
-				// TODO: call the algorithm here
 			}
 		
 		ImGui::EndCombo();
@@ -118,7 +117,8 @@ void Gui::Update()
 		switch(selected_algorithm_)
 		{
 		case Algorithm::Lee:
-			std::cout << "Found Path" << std::endl;
+			LeeAlgorithm::ResetPathMap();
+			LeeAlgorithm::FindPath(Map::GetMap()->GetStart(), Map::GetMap()->GetEnd(), 4);
 			break;
 			
 		default:
