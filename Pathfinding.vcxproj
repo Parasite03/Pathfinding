@@ -171,6 +171,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="AStar.h" />
     <ClInclude Include="Sources\Algorithms\LeeAlgorithm.h" />
     <ClInclude Include="Sources\Map\Map.h" />
     <ClInclude Include="Sources\Map\MapController.h" />
@@ -182,6 +183,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AStar.cpp" />
     <ClCompile Include="Pathfinding.cpp" />
     <ClCompile Include="Sources\Algorithms\LeeAlgorithm.cpp" />
     <ClCompile Include="Sources\Map\Map.cpp" />

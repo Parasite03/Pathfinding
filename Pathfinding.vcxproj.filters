@@ -45,6 +45,9 @@
     <ClInclude Include="Sources\Map\MapRenderer.h">
       <Filter>Sources\Main\Map</Filter>
     </ClInclude>
+    <ClInclude Include="AStar.h">
+      <Filter>Sources\Algorithms</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Pathfinding.cpp">
@@ -70,6 +73,9 @@
     </ClCompile>
     <ClCompile Include="Sources\Map\MapRenderer.cpp">
       <Filter>Sources\Main\Map</Filter>
+    </ClCompile>
+    <ClCompile Include="AStar.cpp">
+      <Filter>Sources\Algorithms</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
