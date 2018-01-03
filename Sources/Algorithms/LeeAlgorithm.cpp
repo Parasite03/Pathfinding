@@ -19,7 +19,7 @@ void LeeAlgorithm::FindPath(sf::Vector2f start_position, sf::Vector2f end_positi
 	short current_distance = 0;
 
 	// Reset previous result
-	LeeAlgorithm::ResetPathMap();
+	ResetPathMap();
 
 	// Start tile is marked 0
 	algorithm_.tile_distace_.at(map->GetStart().x).at(map->GetStart().y) = current_distance;
@@ -122,7 +122,7 @@ void LeeAlgorithm::ShowCheckedTiles()
 		for (auto x = 0; x < map->GetWidth(); ++x)
 			if (algorithm_.checked_tile_.at(x).at(y))
 				map->GetTile(x, y)->SetType(TileType::Checked);
-}
+}	
 
 void LeeAlgorithm::ResetPathMap()
 {
@@ -142,7 +142,10 @@ void LeeAlgorithm::ResetPathMap()
 			if (map->GetTile(x, y)->GetType() == TileType::Wall)
 				tempurary_vector_i.push_back(-2);
 			else
+			{
 				tempurary_vector_i.push_back(-1);
+				map->GetTile(x, y)->SetType(TileType::Blank);
+			}
 
 			tempurary_vector_b.push_back(false);
 		}
