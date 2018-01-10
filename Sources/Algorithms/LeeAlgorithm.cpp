@@ -1,23 +1,19 @@
 #include "LeeAlgorithm.h"
 
-#include "../Map/Map.h"
-#include "../Map/Tile.h"
-#include "../Gui/Gui.h"
+LeeAlgorithm LeeAlgorithm::algorithm_;
 
-void LeeAlgorithm::FindPath()
+void LeeAlgorithm::FindPath(sf::Vector2f start_position, sf::Vector2f end_position, short number_of_directions)
 {
 	// Initialization
+	algorithm_ = LeeAlgorithm();
 	Map* map = Map::GetMap();
-	sf::Vector2f start_position = Map::GetMap()->GetStart();
-	sf::Vector2f end_position = Map::GetMap()->GetEnd();
-	short number_of_directions = 8;
 
 	// Start/end tile - wall, impossible to determine the path
 	if (map->GetTile(map->GetStart())->GetType() == TileType::Wall ||
 		map->GetTile(map->GetEnd())->GetType() == TileType::Wall) return;
 
 	// Number of directions
-	SetDirectionCount(number_of_directions);
+	algorithm_.SetDirectionCount(number_of_directions);
 
 	bool open_tiles;
 	short current_distance = 0;
@@ -26,7 +22,7 @@ void LeeAlgorithm::FindPath()
 	LeeAlgorithm::ResetPathMap();
 
 	// Start tile is marked 0
-	tile_distace_.at(map->GetStart().x).at(map->GetStart().y) = current_distance;
+	algorithm_.tile_distace_.at(map->GetStart().x).at(map->GetStart().y) = current_distance;
 
 	// Wave expansion
 	do {
@@ -35,36 +31,35 @@ void LeeAlgorithm::FindPath()
 		for (auto y = 0; y < map->GetHeight(); ++y)
 			for (auto x = 0; x < map->GetWidth(); ++x)
 			{
-				if (tile_distace_.at(x).at(y) == current_distance)		// Tile is marked current_distance
+				if (algorithm_.tile_distace_.at(x).at(y) == current_distance)		// Tile is marked current_distance
 				{
 					// Note all unlabelled neighbors (in n directions) - current_distance + 1
 
-					for (auto i = 0; i < GetNumberOfDirections(); ++i)
+					for (auto i = 0; i < algorithm_.GetNumberOfDirections(); ++i)
 					{
 						// Find the coordinates of neighboring tiles (in n directions)
-						short delta_y = y + offset_by_y_.at(i),
-							delta_x = x + offset_by_x_.at(i);
+						short delta_y = y + algorithm_.offset_by_y_.at(i),
+							  delta_x = x + algorithm_.offset_by_x_.at(i);
 
 						if (delta_y >= 0 && delta_x >= 0 && delta_y < map->GetHeight() && delta_x < map->GetWidth()
-							&& tile_distace_.at(delta_x).at(delta_y) == -1)
+							&& algorithm_.tile_distace_.at(delta_x).at(delta_y) == -1)
 						{
 							open_tiles = true;												// Unmarked tiles found
-							checked_tile_.at(delta_x).at(delta_y) = true;		// Save tagged tiles
-							tile_distace_.at(delta_x).at(delta_y) = current_distance + 1;
-
+							algorithm_.checked_tile_.at(delta_x).at(delta_y) = true;		// Save tagged tiles
+							algorithm_.tile_distace_.at(delta_x).at(delta_y) = current_distance + 1;
+							
 						}
 					}
 				}
 			}
-		ShowCheckedTiles();
 		current_distance++;			// Propagation of the wave
-	} while (open_tiles && tile_distace_.at(map->GetEnd().x).at(map->GetEnd().y) == -1);
+	} while (open_tiles && algorithm_.tile_distace_.at(map->GetEnd().x).at(map->GetEnd().y) == -1);
 
-	if (tile_distace_.at(map->GetEnd().x).at(map->GetEnd().y) == -1) return;			// Path not found
+	if (algorithm_.tile_distace_.at(map->GetEnd().x).at(map->GetEnd().y) == -1) return;			// Path not found
 
-	SetBackTrace();
-	ShowCheckedTiles();
-	ShowPath();
+	SetBackTrace();			
+	ShowCheckedTiles();		
+	ShowPath();				
 
 }
 
@@ -73,39 +68,38 @@ void LeeAlgorithm::SetBackTrace()
 	Map* map = Map::GetMap();
 
 	// The length of the shortest path from the start tile to the final
-	SetPathLength(tile_distace_.at(map->GetEnd().x).at(map->GetEnd().y));
+	algorithm_.SetPathLength(algorithm_.tile_distace_.at(map->GetEnd().x).at(map->GetEnd().y));
 
 	// Current coordinates - coordinates of the end tile
 	sf::Vector2f current_tile_position = map->GetEnd();
 
-	short current_distance = GetPathLength();
+	short current_distance = algorithm_.GetPathLength();
 
 	// Looking for a path starting at the end tile
 	while (current_distance > 0)
 	{
 		// Save the current coordinates in the path
-		path_map_.push_back(current_tile_position);
+		algorithm_.path_map_.push_back(current_tile_position);
 		current_distance--;
 
-		for (auto i = 0; i < GetNumberOfDirections(); ++i)
+		for (auto i = 0; i < algorithm_.GetNumberOfDirections(); ++i)
 		{
 			// Find the coordinates of neighboring tiles (in n directions)
-			short delta_y = current_tile_position.y + offset_by_y_.at(i),
-				delta_x = current_tile_position.x + offset_by_x_.at(i);
+			short delta_y = current_tile_position.y + algorithm_.offset_by_y_.at(i),
+				  delta_x = current_tile_position.x + algorithm_.offset_by_x_.at(i);
 
 			if (delta_y >= 0 && delta_x >= 0 && delta_y < map->GetHeight() && delta_x < map->GetWidth()
-				&& tile_distace_.at(delta_x).at(delta_y) == current_distance)
+				&& algorithm_.tile_distace_.at(delta_x).at(delta_y) == current_distance)
 			{
 				current_tile_position.y = delta_y;			// The current coordinates are the coordinates of the tile, labeled current_distance
 				current_tile_position.x = delta_x;			// Go to the tile, which is 1 closer to the start
 				break;
 			}
-			
 		}
 	}
 
 	// We store the coordinates of the start tile in the path
-	path_map_.push_back(map->GetStart());
+	algorithm_.path_map_.push_back(map->GetStart());
 
 }
 
@@ -116,8 +110,8 @@ void LeeAlgorithm::ShowPath()
 	map->GetTile(map->GetStart())->SetType(TileType::Start);
 	map->GetTile(map->GetEnd())->SetType(TileType::End);
 
-	for (auto i = 1; i < path_length_; ++i)
-		map->GetTile(path_map_.at(i))->SetType(TileType::Path);
+	for (auto i = 1; i < algorithm_.path_length_; ++i)
+		map->GetTile(algorithm_.path_map_.at(i))->SetType(TileType::Path);
 }
 
 void LeeAlgorithm::ShowCheckedTiles()
@@ -126,7 +120,7 @@ void LeeAlgorithm::ShowCheckedTiles()
 
 	for (auto y = 0; y < map->GetHeight(); ++y)
 		for (auto x = 0; x < map->GetWidth(); ++x)
-			if (checked_tile_.at(x).at(y))
+			if (algorithm_.checked_tile_.at(x).at(y))
 				map->GetTile(x, y)->SetType(TileType::Checked);
 }
 
@@ -134,27 +128,27 @@ void LeeAlgorithm::ResetPathMap()
 {
 	Map* map = Map::GetMap();
 
-	path_map_.clear();
-	tile_distace_.clear();
-	checked_tile_.clear();
+	algorithm_.path_map_.clear();
+	algorithm_.tile_distace_.clear();
+	algorithm_.checked_tile_.clear();
 
 	for (auto x = 0; x < map->GetWidth(); ++x)
 	{
-		std::vector<int> temporary_vector_i;
+		std::vector<int> tempurary_vector_i;
 		std::vector<bool> tempurary_vector_b;
 
 		for (auto y = 0; y < map->GetHeight(); ++y)
 		{
 			if (map->GetTile(x, y)->GetType() == TileType::Wall)
-				temporary_vector_i.push_back(-2);
+				tempurary_vector_i.push_back(-2);
 			else
-				temporary_vector_i.push_back(-1);
+				tempurary_vector_i.push_back(-1);
 
 			tempurary_vector_b.push_back(false);
 		}
-
-		tile_distace_.push_back(temporary_vector_i);
-		checked_tile_.push_back(tempurary_vector_b);
+		
+		algorithm_.tile_distace_.push_back(tempurary_vector_i);
+		algorithm_.checked_tile_.push_back(tempurary_vector_b);
 	}
 }
 
@@ -165,16 +159,16 @@ void LeeAlgorithm::SetDirectionCount(const short number_of_directions)
 	number_of_directions_ = number_of_directions;
 
 	// Places corresponding to neighboring tiles in n directions
-	if (GetNumberOfDirections() == 4)
+	if (algorithm_.GetNumberOfDirections() == 4)
 	{
 		offset_by_x_ = { 1, 0, -1, 0 };
 		offset_by_y_ = { 0, 1, 0, -1 };
 	}
 	else
-		if (GetNumberOfDirections() == 8)
+		if (algorithm_.GetNumberOfDirections() == 8)
 		{
-			offset_by_x_ = { 1, 0, -1, 0, 1, -1, -1, 1 };
-			offset_by_y_ = { 0, 1, 0, -1, 1, 1, -1, -1 };
+			offset_by_x_ = { 1, 1, 0, -1, -1, -1, 0, 1 };
+			offset_by_y_ = { 0, 1, 1, 1, 0, -1, -1, -1 };
 		}
 
 }
@@ -192,6 +186,11 @@ unsigned char LeeAlgorithm::GetNumberOfDirections()
 short LeeAlgorithm::GetPathLength()
 {
 	return path_length_;
+}
+
+LeeAlgorithm* LeeAlgorithm::GetAlgorithm()
+{
+	return &algorithm_;
 }
 
 LeeAlgorithm::LeeAlgorithm()

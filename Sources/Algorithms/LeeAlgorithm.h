@@ -1,25 +1,30 @@
 #pragma once
-#include "Algorithm.h"
 
-class LeeAlgorithm : public Algorithm
+#include "../Map/Map.h"
+#include "../Map/Tile.h"
+
+class LeeAlgorithm
 {
 public:
-	LeeAlgorithm();
-	~LeeAlgorithm();
+	static void FindPath(sf::Vector2f start_position, sf::Vector2f end_position, short number_of_directions);
+	static void SetBackTrace();
+	static void ShowPath();
+	static void ShowCheckedTiles();
+	static void ResetPathMap();
 
-	void FindPath() override;
+	static LeeAlgorithm* GetAlgorithm();
+	
 	void SetDirectionCount(const short number_of_directions);
 	void SetPathLength(const short path_length);
-
+	
 	unsigned char GetNumberOfDirections();
 	short GetPathLength();
 
 private:
+	LeeAlgorithm();
+	~LeeAlgorithm();
 
-	void SetBackTrace();
-	void ShowPath();
-	void ShowCheckedTiles();
-	void ResetPathMap();
+	static LeeAlgorithm algorithm_;
 
 	short number_of_directions_;
 	short path_length_;

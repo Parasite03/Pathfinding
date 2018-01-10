@@ -21,8 +21,6 @@ public:
 	void SetEnd(const short x, const short y);
 	void SetEnd(const sf::Vector2f coordinates);
 
-	void ClearAlgorithmResults();
-
 	Tile* GetTile(const short x, const short y) const;
 	Tile* GetTile(const sf::Vector2f coordinates) const;
 
