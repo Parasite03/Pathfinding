@@ -1,6 +1,7 @@
 #include "Map.h"
 #include <fstream>
 #include <sstream>
+#include "MapController.h"
 
 Map Map::map_;
 
@@ -67,6 +68,7 @@ void Map::Create(const short width, const short height)
 			vector.push_back(Tile(j, i, TileType::Blank));
 		map_.tiles_.push_back(vector);
 	}
+	MapController::CenterView();
 }
 
 void Map::Load(const std::string path)
@@ -91,7 +93,7 @@ void Map::Load(const std::string path)
 			vector.push_back(Tile(j, i, strings.at(i).at(j)));
 		map_.tiles_.push_back(vector);
 	}
-
+	MapController::CenterView();
 }
 
 void Map::Save(const std::string path)
@@ -111,6 +113,7 @@ void Map::Save(const std::string path)
 			string.push_back(tile.GetTypeChar());
 		file << string << "\n";
 	}
+	MapController::CenterView();
 }
 
 Map* Map::GetMap()
@@ -159,6 +162,15 @@ void Map::SetEnd(const sf::Vector2f coordinates)
 {
 	end_ = coordinates;
 }
+
+void Map::ClearAlgorithmResults()
+{
+	for (auto &row : tiles_)
+		for (auto &tile : row)
+			if (tile.GetType() == TileType::Checked || tile.GetType() == TileType::Path)
+				tile.SetType(TileType::Blank);
+}
+
 
 Tile* Map::GetTile(const short x, const short y) const
 {
