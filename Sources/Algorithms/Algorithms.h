@@ -2,7 +2,8 @@
 
 enum class Algorithms
 {
-	Lee
+	Lee,
+	AStar
 };
 
 DWORD WINAPI ProcessAlgorithm(LPVOID t);

@@ -87,6 +87,9 @@
     <ClInclude Include="Sources\Algorithms\Algorithm.h">
       <Filter>Sources\Algorithms</Filter>
     </ClInclude>
+    <ClInclude Include="Sources\Algorithms\AStar.h">
+      <Filter>Sources\Algorithms</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Pathfinding.cpp">
@@ -135,6 +138,9 @@
       <Filter>Sources\Algorithms</Filter>
     </ClCompile>
     <ClCompile Include="Sources\Algorithms\Algorithm.cpp">
+      <Filter>Sources\Algorithms</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Algorithms\AStar.cpp">
       <Filter>Sources\Algorithms</Filter>
     </ClCompile>
   </ItemGroup>

@@ -1,10 +1,12 @@
 #include "Algorithms.h"
 #include "../Gui/Gui.h"
 #include "LeeAlgorithm.h"
+#include "AStar.h"
 
 DWORD WINAPI ProcessAlgorithm(LPVOID t)
 {
 	LeeAlgorithm lee;
+	AStar astar;
 	sf::Clock clock;
 	MEMORYSTATUSEX memInfo;
 	memInfo.dwLength = sizeof(MEMORYSTATUSEX);
@@ -19,6 +21,9 @@ DWORD WINAPI ProcessAlgorithm(LPVOID t)
 		lee.FindPath();
 		if (Gui::GetVirtualMemUsedActive() < memInfo.ullTotalPageFile - memInfo.ullAvailPageFile)
 			Gui::SetVirtualMemUsedActive(memInfo.ullTotalPageFile - memInfo.ullAvailPageFile);
+		break;
+	case Algorithms::AStar:
+		astar.FindPath();
 		break;
 	default:
 		break;

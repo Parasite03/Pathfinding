@@ -46,6 +46,7 @@ void Gui::Initialize(sf::RenderWindow* window)
 	end_.loadFromFile("./Data/Textures/end.png");
 
 	algorithms.emplace(Algorithms::Lee, "Lee Algorithm");
+	algorithms.emplace(Algorithms::AStar, "A*");
 }
 
 void Gui::Update()
