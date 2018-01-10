@@ -163,6 +163,15 @@ void Map::SetEnd(const sf::Vector2f coordinates)
 	end_ = coordinates;
 }
 
+void Map::ClearAlgorithmResults()
+{
+	for (auto &row : tiles_)
+		for (auto &tile : row)
+			if (tile.GetType() == TileType::Checked || tile.GetType() == TileType::Path)
+				tile.SetType(TileType::Blank);
+}
+
+
 Tile* Map::GetTile(const short x, const short y) const
 {
 	return &map_.tiles_.at(y).at(x);

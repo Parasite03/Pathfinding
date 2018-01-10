@@ -172,7 +172,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Clock.h" />
-    <ClInclude Include="Sources\Algorithms\AlgorithmHandler.h" />
+    <ClInclude Include="Sources\Algorithms\Algorithm.h" />
+    <ClInclude Include="Sources\Algorithms\Algorithms.h" />
     <ClInclude Include="Sources\Algorithms\LeeAlgorithm.h" />
     <ClInclude Include="Sources\Gui\Gui.h" />
     <ClInclude Include="Sources\ImGui\imconfig.h" />
@@ -194,7 +195,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Pathfinding.cpp" />
-    <ClCompile Include="Sources\Algorithms\AlgorithmHandler.cpp" />
+    <ClCompile Include="Sources\Algorithms\Algorithm.cpp" />
+    <ClCompile Include="Sources\Algorithms\Algorithms.cpp" />
     <ClCompile Include="Sources\Algorithms\LeeAlgorithm.cpp" />
     <ClCompile Include="Sources\Gui\Gui.cpp" />
     <ClCompile Include="Sources\ImGui\imgui-SFML.cpp" />

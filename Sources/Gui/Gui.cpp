@@ -8,6 +8,7 @@
 #include "../Map/Map.h"
 #include "../Utilities/FileBrowser.h"
 #include "../Algorithms/LeeAlgorithm.h"
+#include "../Algorithms/Algorithms.h"
 
 sf::RenderWindow* Gui::window_;
 
@@ -15,10 +16,14 @@ sf::Texture Gui::wall_;
 sf::Texture Gui::blank_;
 sf::Texture Gui::start_;
 sf::Texture Gui::end_;
-Algorithm Gui::selected_algorithm_;
+Algorithms Gui::selected_algorithm_;
+
+sf::Time Gui::run_time_;
+DWORDLONG Gui::virtualMemUsedPassive_;
+DWORDLONG Gui::virtualMemUsedActive_;
 char width[8] = "50", height[8] = "50";
 
-std::map<Algorithm, std::string> algorithms;
+std::map<Algorithms, std::string> algorithms;
 
 Gui::Gui()
 {
@@ -40,7 +45,7 @@ void Gui::Initialize(sf::RenderWindow* window)
 	start_.loadFromFile("./Data/Textures/start.png");
 	end_.loadFromFile("./Data/Textures/end.png");
 
-	algorithms.emplace(Algorithm::Lee, "Lee Algorithm");
+	algorithms.emplace(Algorithms::Lee, "Lee Algorithm");
 }
 
 void Gui::Update()
@@ -67,7 +72,7 @@ void Gui::Update()
 	ImGui::End();
 
 	// Map window
-	ImGui::Begin("Map", 0, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse);
+	ImGui::Begin("Map", nullptr, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse);
 	ImGui::SetWindowPos({ 68, 5 });
 
 	if (ImGui::Button("New"))
@@ -114,17 +119,22 @@ void Gui::Update()
 
 	if (ImGui::Button("Find Path"))
 	{
-		switch(selected_algorithm_)
-		{
-		case Algorithm::Lee:
-			LeeAlgorithm::ResetPathMap();
-			LeeAlgorithm::FindPath(Map::GetMap()->GetStart(), Map::GetMap()->GetEnd(), 4);
-			break;
-			
-		default:
-			break;
-		}
+		Map::GetMap()->ClearAlgorithmResults();
+		CreateThread(nullptr, 0, &ProcessAlgorithm, nullptr, 0, nullptr);
 	}
+
+	char time[15];
+	char memory_active[15];
+	char memory_passive[15];
+
+	_itoa_s(run_time_.asSeconds(), time, 10);
+	_itoa_s(virtualMemUsedActive_, memory_active, 10);
+	_itoa_s(virtualMemUsedActive_ - virtualMemUsedPassive_, memory_passive, 10);
+
+
+	ImGui::Text("Time: ", time, "seconds");
+	ImGui::Text("Total Memory Use: ", memory_active);
+	ImGui::Text("Memory Use Increase: ", memory_passive);
 
 	ImGui::End();
 }
@@ -132,5 +142,31 @@ void Gui::Update()
 void Gui::Draw()
 {
 	ImGui::SFML::Render(*window_);
+}
+
+void Gui::SetRunTime(sf::Time time)
+{
+	
+}
+
+void Gui::SetVirtualMemUsedActive(DWORDLONG mem)
+{
+	virtualMemUsedActive_ = mem;
+}
+
+DWORDLONG Gui::GetVirtualMemUsedActive()
+{
+	return virtualMemUsedActive_;
+}
+
+
+void Gui::SetVirtualMemUsedPassive(DWORDLONG mem)
+{
+	virtualMemUsedPassive_ = mem;
+}
+
+Algorithms Gui::GetSelectedtAlgorithm()
+{
+	return selected_algorithm_;
 }
 

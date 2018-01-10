@@ -23,22 +23,22 @@ void MapController::MoveView()
 	sf::View view = window_->getView();
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) && !sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
 	{
-		view.move(-5, 0);
+		view.move(-10, 0);
 	}
 	
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) && !sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
 	{
-		view.move(0, -5);
+		view.move(0, -10);
 	}
 	
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) && !sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
 	{
-		view.move(5, 0);
+		view.move(10, 0);
 	}
 	
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) && !sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
 	{
-		view.move(0, 5);
+		view.move(0, 10);
 	}
 	window_->setView(view);
 }

@@ -40,20 +40,20 @@ void MapRenderer::Draw()
 	else
 		start_coordinates.y = floor(start_coordinates.y /= 16);
 
-	if (end_coordinates.x >= Map::GetMap()->GetWidth() * 16)
+	if (end_coordinates.x >= (Map::GetMap()->GetWidth() - 1) * 16)
 		end_coordinates.x = Map::GetMap()->GetWidth() - 1;
 	else
 		end_coordinates.x = ceil(end_coordinates.x /= 16);
 
-	if (end_coordinates.y >= Map::GetMap()->GetHeight() * 16)
+	if (end_coordinates.y >= (Map::GetMap()->GetHeight() - 1) * 16)
 		end_coordinates.y = Map::GetMap()->GetHeight() - 1;
 	else
 		end_coordinates.y = ceil(end_coordinates.y /= 16);
 
 	// Draw the tiles
-	for (auto i = start_coordinates.y; i < end_coordinates.y; i++)
+	for (auto i = start_coordinates.y; i <= end_coordinates.y; i++)
 	{
-		for (auto j = start_coordinates.x; j < end_coordinates.x; j++)
+		for (auto j = start_coordinates.x; j <= end_coordinates.x; j++)
 		{
 			sf::Vector2f position(tile_texture_.getSize().x * Map::GetMap()->GetTile(j, i)->GetX(), tile_texture_.getSize().y * Map::GetMap()->GetTile(j, i)->GetY());
 			tile_sprite_.setPosition(position);
