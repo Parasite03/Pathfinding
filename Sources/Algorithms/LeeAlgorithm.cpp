@@ -56,7 +56,6 @@ void LeeAlgorithm::FindPath()
 					}
 				}
 			}
-		ShowCheckedTiles();
 		current_distance++;			// Propagation of the wave
 	} while (open_tiles && tile_distace_.at(map->GetEnd().x).at(map->GetEnd().y) == -1);
 
@@ -100,7 +99,7 @@ void LeeAlgorithm::SetBackTrace()
 				current_tile_position.x = delta_x;			// Go to the tile, which is 1 closer to the start
 				break;
 			}
-			
+			ShowCheckedTiles();
 		}
 	}
 
