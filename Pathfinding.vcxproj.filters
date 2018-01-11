@@ -81,13 +81,13 @@
     <ClInclude Include="Sources\Utilities\FileBrowser.h">
       <Filter>Sources\Utilities</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Algorithms\Algorithms.h">
+    <ClInclude Include="Sources\Algorithms\AStar.h">
+      <Filter>Sources\Algorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Algorithms\BaseAlgorithm.h">
       <Filter>Sources\Algorithms</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Algorithms\Algorithm.h">
-      <Filter>Sources\Algorithms</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\Algorithms\AStar.h">
       <Filter>Sources\Algorithms</Filter>
     </ClInclude>
   </ItemGroup>
@@ -134,13 +134,13 @@
     <ClCompile Include="Sources\Utilities\FileBrowser.cpp">
       <Filter>Sources\Utilities</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Algorithms\Algorithms.cpp">
+    <ClCompile Include="Sources\Algorithms\AStar.cpp">
+      <Filter>Sources\Algorithms</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Algorithms\BaseAlgorithm.cpp">
       <Filter>Sources\Algorithms</Filter>
     </ClCompile>
     <ClCompile Include="Sources\Algorithms\Algorithm.cpp">
-      <Filter>Sources\Algorithms</Filter>
-    </ClCompile>
-    <ClCompile Include="Sources\Algorithms\AStar.cpp">
       <Filter>Sources\Algorithms</Filter>
     </ClCompile>
   </ItemGroup>

@@ -1,5 +1,5 @@
 #pragma once
-#include "../Algorithms/Algorithms.h"
+#include "../Algorithms/Algorithm.h"
 
 class Gui
 {
@@ -14,11 +14,11 @@ private:
 	static sf::Texture start_;
 	static sf::Texture end_;
 
-	static Algorithms selected_algorithm_;
+	static Algorithm selected_algorithm_;
 
 	static sf::Time run_time_;
-	static DWORDLONG virtualMemUsedPassive_;
-	static DWORDLONG virtualMemUsedActive_;
+	static DWORDLONG virtual_mem_used_passive_;
+	static DWORDLONG virtual_mem_used_active_;
 
 public:
 	static void Initialize(sf::RenderWindow* window);
@@ -28,6 +28,6 @@ public:
 	static void SetVirtualMemUsedActive(DWORDLONG mem);
 	static DWORDLONG GetVirtualMemUsedActive();
 	static void SetVirtualMemUsedPassive(DWORDLONG mem);
-	static Algorithms GetSelectedtAlgorithm();
+	static Algorithm GetSelectedAlgorithm();
 };
 

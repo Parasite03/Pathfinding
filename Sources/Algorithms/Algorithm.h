@@ -1,8 +1,16 @@
 #pragma once
+#include "BaseAlgorithm.h"
+#include <memory>
 
-class Algorithm abstract
+enum class Algorithm
 {
-public:
-	virtual void FindPath() {};
-	virtual ~Algorithm() {};
+	Lee,
+	AStar,
+	Dijkstra
 };
+
+extern std::map<Algorithm, std::string> algorithm_names;
+extern std::map<Algorithm, std::unique_ptr<BaseAlgorithm>> algorithm_pointers;
+
+void InitializeAlgorithms();
+DWORD WINAPI ProcessAlgorithm(LPVOID lpParameter);

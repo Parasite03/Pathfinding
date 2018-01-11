@@ -1,7 +1,7 @@
 #pragma once
-#include "Algorithm.h"
+#include "BaseAlgorithm.h"
 
-class LeeAlgorithm : public Algorithm
+class LeeAlgorithm : public BaseAlgorithm
 {
 public:
 	LeeAlgorithm();

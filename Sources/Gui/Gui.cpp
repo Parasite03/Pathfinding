@@ -8,7 +8,7 @@
 #include "../Map/Map.h"
 #include "../Utilities/FileBrowser.h"
 #include "../Algorithms/LeeAlgorithm.h"
-#include "../Algorithms/Algorithms.h"
+#include "../Algorithms/Algorithm.h"
 
 sf::RenderWindow* Gui::window_;
 
@@ -16,14 +16,12 @@ sf::Texture Gui::wall_;
 sf::Texture Gui::blank_;
 sf::Texture Gui::start_;
 sf::Texture Gui::end_;
-Algorithms Gui::selected_algorithm_;
+Algorithm Gui::selected_algorithm_;
 
 sf::Time Gui::run_time_;
-DWORDLONG Gui::virtualMemUsedPassive_;
-DWORDLONG Gui::virtualMemUsedActive_;
+DWORDLONG Gui::virtual_mem_used_passive_;
+DWORDLONG Gui::virtual_mem_used_active_;
 char width[8] = "50", height[8] = "50";
-
-std::map<Algorithms, std::string> algorithms;
 
 Gui::Gui()
 {
@@ -45,8 +43,7 @@ void Gui::Initialize(sf::RenderWindow* window)
 	start_.loadFromFile("./Data/Textures/start.png");
 	end_.loadFromFile("./Data/Textures/end.png");
 
-	algorithms.emplace(Algorithms::Lee, "Lee Algorithm");
-	algorithms.emplace(Algorithms::AStar, "A*");
+	InitializeAlgorithms();
 }
 
 void Gui::Update()
@@ -107,9 +104,9 @@ void Gui::Update()
 
 	ImGui::SetWindowPos({ 343, 5 });
 
-	if (ImGui::BeginCombo("", algorithms.at(selected_algorithm_).c_str()))
+	if (ImGui::BeginCombo("", algorithm_names.at(selected_algorithm_).c_str()))
 	{
-		for (auto algorithm : algorithms)
+		for (auto algorithm : algorithm_names)
 			if (ImGui::Selectable(algorithm.second.c_str(), algorithm.first == selected_algorithm_))
 			{
 				selected_algorithm_ = algorithm.first;
@@ -124,18 +121,32 @@ void Gui::Update()
 		CreateThread(nullptr, 0, &ProcessAlgorithm, nullptr, 0, nullptr);
 	}
 
+	ImGui::SameLine();
+	if (ImGui::Button("Clear Results"))
+	{
+		Map::GetMap()->ClearAlgorithmResults();
+	}
+
 	char time[15];
 	char memory_active[15];
 	char memory_passive[15];
 
 	_itoa_s(run_time_.asSeconds(), time, 10);
-	_itoa_s(virtualMemUsedActive_, memory_active, 10);
-	_itoa_s(virtualMemUsedActive_ - virtualMemUsedPassive_, memory_passive, 10);
+	_itoa_s(virtual_mem_used_active_, memory_active, 10);
+	_itoa_s(virtual_mem_used_active_ - virtual_mem_used_passive_, memory_passive, 10);
 
 
-	ImGui::Text("Time: ", time, "seconds");
-	ImGui::Text("Total Memory Use: ", memory_active);
-	ImGui::Text("Memory Use Increase: ", memory_passive);
+	ImGui::Text("Time:");
+	ImGui::SameLine();
+	ImGui::Text(time);
+	ImGui::SameLine();
+	ImGui::Text("seconds");
+	ImGui::Text("Total Memory Use:");
+	ImGui::SameLine();
+	ImGui::Text(memory_active);
+	ImGui::Text("Memory Use Increase:");
+	ImGui::SameLine();
+	ImGui::Text(memory_passive);
 
 	ImGui::End();
 }
@@ -152,21 +163,21 @@ void Gui::SetRunTime(sf::Time time)
 
 void Gui::SetVirtualMemUsedActive(DWORDLONG mem)
 {
-	virtualMemUsedActive_ = mem;
+	virtual_mem_used_active_ = mem;
 }
 
 DWORDLONG Gui::GetVirtualMemUsedActive()
 {
-	return virtualMemUsedActive_;
+	return virtual_mem_used_active_;
 }
 
 
 void Gui::SetVirtualMemUsedPassive(DWORDLONG mem)
 {
-	virtualMemUsedPassive_ = mem;
+	virtual_mem_used_passive_ = mem;
 }
 
-Algorithms Gui::GetSelectedtAlgorithm()
+Algorithm Gui::GetSelectedAlgorithm()
 {
 	return selected_algorithm_;
 }

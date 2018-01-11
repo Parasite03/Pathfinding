@@ -1,7 +1,7 @@
 #pragma once
-#include "Algorithm.h"
+#include "BaseAlgorithm.h"
 
-class AStar : public Algorithm
+class AStar : public BaseAlgorithm
 {
 public:
 	AStar();

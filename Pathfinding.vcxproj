@@ -121,7 +121,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>sfml-audio-d.lib;sfml-graphics-d.lib;sfml-main-d.lib;sfml-system-d.lib;sfml-window-d.lib;sfgui-d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>sfml-audio-d.lib;sfml-graphics-d.lib;sfml-main-d.lib;sfml-system-d.lib;sfml-window-d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -167,14 +167,14 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>sfml-audio.lib;sfml-graphics.lib;sfml-main.lib;sfml-system.lib;sfml-window.lib;sfgui.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>sfml-audio.lib;sfml-graphics.lib;sfml-main.lib;sfml-system.lib;sfml-window.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Clock.h" />
     <ClInclude Include="Sources\Algorithms\Algorithm.h" />
-    <ClInclude Include="Sources\Algorithms\Algorithms.h" />
     <ClInclude Include="Sources\Algorithms\AStar.h" />
+    <ClInclude Include="Sources\Algorithms\BaseAlgorithm.h" />
     <ClInclude Include="Sources\Algorithms\LeeAlgorithm.h" />
     <ClInclude Include="Sources\Gui\Gui.h" />
     <ClInclude Include="Sources\ImGui\imconfig.h" />
@@ -197,8 +197,8 @@
   <ItemGroup>
     <ClCompile Include="Pathfinding.cpp" />
     <ClCompile Include="Sources\Algorithms\Algorithm.cpp" />
-    <ClCompile Include="Sources\Algorithms\Algorithms.cpp" />
     <ClCompile Include="Sources\Algorithms\AStar.cpp" />
+    <ClCompile Include="Sources\Algorithms\BaseAlgorithm.cpp" />
     <ClCompile Include="Sources\Algorithms\LeeAlgorithm.cpp" />
     <ClCompile Include="Sources\Gui\Gui.cpp" />
     <ClCompile Include="Sources\ImGui\imgui-SFML.cpp" />
