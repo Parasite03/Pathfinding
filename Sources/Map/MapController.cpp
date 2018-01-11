@@ -1,5 +1,6 @@
 #include "MapController.h"
 #include "Map.h"
+#include "../Utilities/EventManager.h"
 
 sf::RenderWindow* MapController::window_;
 
@@ -22,25 +23,20 @@ void MapController::MoveView()
 {
 	sf::View view = window_->getView();
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) && !sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-	{
 		view.move(-10, 0);
-	}
 	
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) && !sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-	{
 		view.move(0, -10);
-	}
 	
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) && !sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-	{
 		view.move(10, 0);
-	}
 	
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) && !sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-	{
 		view.move(0, 10);
-	}
 	window_->setView(view);
+
+	if (EventManager::GetEvent(sf::Event::KeyPressed) && sf::Keyboard::isKeyPressed(sf::Keyboard::Home))
+		CenterView();
 }
 
 void MapController::CenterView()
