@@ -131,7 +131,7 @@ void Gui::Update()
 	char memory_active[15];
 	char memory_passive[15];
 
-	_itoa_s(run_time_.asSeconds(), time, 10);
+	sprintf_s(time, "%f", run_time_.asSeconds());
 	_itoa_s(virtual_mem_used_active_, memory_active, 10);
 	_itoa_s(virtual_mem_used_active_ - virtual_mem_used_passive_, memory_passive, 10);
 
@@ -158,7 +158,7 @@ void Gui::Draw()
 
 void Gui::SetRunTime(sf::Time time)
 {
-	
+	run_time_ = time;
 }
 
 void Gui::SetVirtualMemUsedActive(DWORDLONG mem)

@@ -20,6 +20,8 @@ void InitializeAlgorithms()
 
 DWORD WINAPI ProcessAlgorithm(LPVOID lpParameter)
 {
+	sf::Clock clock;
 	algorithm_pointers.at(Gui::GetSelectedAlgorithm()).get()->FindPath();
+	Gui::SetRunTime(clock.getElapsedTime());
 	return 0;
 }

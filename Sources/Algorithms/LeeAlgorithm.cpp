@@ -140,7 +140,7 @@ void LeeAlgorithm::ResetPathMap()
 	for (auto x = 0; x < map->GetWidth(); ++x)
 	{
 		std::vector<int> temporary_vector_i;
-		std::vector<bool> tempurary_vector_b;
+		std::vector<bool> temporary_vector_b;
 
 		for (auto y = 0; y < map->GetHeight(); ++y)
 		{
@@ -149,11 +149,11 @@ void LeeAlgorithm::ResetPathMap()
 			else
 				temporary_vector_i.push_back(-1);
 
-			tempurary_vector_b.push_back(false);
+			temporary_vector_b.push_back(false);
 		}
 
 		tile_distace_.push_back(temporary_vector_i);
-		checked_tile_.push_back(tempurary_vector_b);
+		checked_tile_.push_back(temporary_vector_b);
 	}
 }
 
