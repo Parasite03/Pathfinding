@@ -21,6 +21,7 @@ Algorithm Gui::selected_algorithm_;
 sf::Time Gui::run_time_;
 DWORDLONG Gui::virtual_mem_used_passive_;
 DWORDLONG Gui::virtual_mem_used_active_;
+bool Gui::use_8_directions_;
 char width[8] = "50", height[8] = "50";
 
 Gui::Gui()
@@ -37,6 +38,7 @@ void Gui::Initialize(sf::RenderWindow* window)
 {
 	ImGui::SFML::Init(*window);
 	window_ = window;
+	use_8_directions_ = false;
 
 	wall_.loadFromFile("./Data/Textures/wall.png");
 	blank_.loadFromFile("./Data/Textures/blank.png");
@@ -127,6 +129,8 @@ void Gui::Update()
 		Map::GetMap()->ClearAlgorithmResults();
 	}
 
+	ImGui::Checkbox("Use 8 directions", &use_8_directions_);
+
 	char time[15];
 	char memory_active[15];
 	char memory_passive[15];
@@ -135,17 +139,14 @@ void Gui::Update()
 	_itoa_s(virtual_mem_used_active_, memory_active, 10);
 	_itoa_s(virtual_mem_used_active_ - virtual_mem_used_passive_, memory_passive, 10);
 
-
-	ImGui::Text("Time:");
-	ImGui::SameLine();
-	ImGui::Text(time);
-	ImGui::SameLine();
+	ImGui::Text("Time:"); ImGui::SameLine();
+	ImGui::Text(time); ImGui::SameLine();
 	ImGui::Text("seconds");
-	ImGui::Text("Total Memory Use:");
-	ImGui::SameLine();
+
+	ImGui::Text("Total Memory Use:"); ImGui::SameLine();
 	ImGui::Text(memory_active);
-	ImGui::Text("Memory Use Increase:");
-	ImGui::SameLine();
+
+	ImGui::Text("Memory Use Increase:"); ImGui::SameLine();
 	ImGui::Text(memory_passive);
 
 	ImGui::End();
@@ -176,6 +177,12 @@ void Gui::SetVirtualMemUsedPassive(DWORDLONG mem)
 {
 	virtual_mem_used_passive_ = mem;
 }
+
+bool Gui::Get8Directions()
+{
+	return use_8_directions_;
+}
+
 
 Algorithm Gui::GetSelectedAlgorithm()
 {

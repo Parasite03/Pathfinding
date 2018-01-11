@@ -19,15 +19,20 @@ private:
 	static sf::Time run_time_;
 	static DWORDLONG virtual_mem_used_passive_;
 	static DWORDLONG virtual_mem_used_active_;
+	
+	static bool use_8_directions_;
 
 public:
 	static void Initialize(sf::RenderWindow* window);
 	static void Update();
 	static void Draw();
+
 	static void SetRunTime(sf::Time time);
 	static void SetVirtualMemUsedActive(DWORDLONG mem);
 	static DWORDLONG GetVirtualMemUsedActive();
 	static void SetVirtualMemUsedPassive(DWORDLONG mem);
+
+	static bool Get8Directions();
 	static Algorithm GetSelectedAlgorithm();
 };
 
