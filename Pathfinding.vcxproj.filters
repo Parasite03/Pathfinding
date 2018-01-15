@@ -90,6 +90,9 @@
     <ClInclude Include="Sources\Algorithms\Algorithm.h">
       <Filter>Sources\Algorithms</Filter>
     </ClInclude>
+    <ClInclude Include="Sources\Algorithms\Dijkstra.h">
+      <Filter>Sources\Algorithms</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Pathfinding.cpp">
@@ -141,6 +144,9 @@
       <Filter>Sources\Algorithms</Filter>
     </ClCompile>
     <ClCompile Include="Sources\Algorithms\Algorithm.cpp">
+      <Filter>Sources\Algorithms</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Algorithms\Dijkstra.cpp">
       <Filter>Sources\Algorithms</Filter>
     </ClCompile>
   </ItemGroup>

@@ -23,10 +23,10 @@ void LeeAlgorithm::FindPath()
 	short current_distance = 0;
 
 	// Reset previous result
-	LeeAlgorithm::ResetPathMap();
+	ResetPathMap();
 
 	// Start tile is marked 0
-	tile_distace_.at(map->GetStart().x).at(map->GetStart().y) = current_distance;
+	tile_distance_.at(map->GetStart().x).at(map->GetStart().y) = current_distance;
 
 	// Wave expansion
 	do {
@@ -35,7 +35,7 @@ void LeeAlgorithm::FindPath()
 		for (auto y = 0; y < map->GetHeight(); ++y)
 			for (auto x = 0; x < map->GetWidth(); ++x)
 			{
-				if (tile_distace_.at(x).at(y) == current_distance)		// Tile is marked current_distance
+				if (tile_distance_.at(x).at(y) == current_distance)		// Tile is marked current_distance
 				{
 					// Note all unlabelled neighbors (in n directions) - current_distance + 1
 
@@ -46,11 +46,11 @@ void LeeAlgorithm::FindPath()
 							delta_x = x + offset_by_x_.at(i);
 
 						if (delta_y >= 0 && delta_x >= 0 && delta_y < map->GetHeight() && delta_x < map->GetWidth()
-							&& tile_distace_.at(delta_x).at(delta_y) == -1)
+							&& tile_distance_.at(delta_x).at(delta_y) == -1)
 						{
 							open_tiles = true;												// Unmarked tiles found
-							checked_tile_.at(delta_x).at(delta_y) = true;		// Save tagged tiles
-							tile_distace_.at(delta_x).at(delta_y) = current_distance + 1;
+							checked_tiles_.at(delta_x).at(delta_y) = true;		// Save tagged tiles
+							tile_distance_.at(delta_x).at(delta_y) = current_distance + 1;
 
 						}
 					}
@@ -58,9 +58,9 @@ void LeeAlgorithm::FindPath()
 			}
 		ShowCheckedTiles();
 		current_distance++;			// Propagation of the wave
-	} while (open_tiles && tile_distace_.at(map->GetEnd().x).at(map->GetEnd().y) == -1);
+	} while (open_tiles && tile_distance_.at(map->GetEnd().x).at(map->GetEnd().y) == -1);
 
-	if (tile_distace_.at(map->GetEnd().x).at(map->GetEnd().y) == -1) return;			// Path not found
+	if (tile_distance_.at(map->GetEnd().x).at(map->GetEnd().y) == -1) return;			// Path not found
 
 	SetBackTrace();
 	//ShowCheckedTiles();
@@ -73,7 +73,7 @@ void LeeAlgorithm::SetBackTrace()
 	Map* map = Map::GetMap();
 
 	// The length of the shortest path from the start tile to the final
-	SetPathLength(tile_distace_.at(map->GetEnd().x).at(map->GetEnd().y));
+	SetPathLength(tile_distance_.at(map->GetEnd().x).at(map->GetEnd().y));
 
 	// Current coordinates - coordinates of the end tile
 	sf::Vector2f current_tile_position = map->GetEnd();
@@ -94,7 +94,7 @@ void LeeAlgorithm::SetBackTrace()
 				delta_x = current_tile_position.x + offset_by_x_.at(i);
 
 			if (delta_y >= 0 && delta_x >= 0 && delta_y < map->GetHeight() && delta_x < map->GetWidth()
-				&& tile_distace_.at(delta_x).at(delta_y) == current_distance)
+				&& tile_distance_.at(delta_x).at(delta_y) == current_distance)
 			{
 				current_tile_position.y = delta_y;			// The current coordinates are the coordinates of the tile, labeled current_distance
 				current_tile_position.x = delta_x;			// Go to the tile, which is 1 closer to the start
@@ -125,7 +125,7 @@ void LeeAlgorithm::ShowCheckedTiles()
 
 	for (auto y = 0; y < map->GetHeight(); ++y)
 		for (auto x = 0; x < map->GetWidth(); ++x)
-			if (checked_tile_.at(x).at(y))
+			if (checked_tiles_.at(x).at(y))
 				map->GetTile(x, y)->SetType(TileType::Checked);
 }
 
@@ -134,8 +134,8 @@ void LeeAlgorithm::ResetPathMap()
 	Map* map = Map::GetMap();
 
 	path_map_.clear();
-	tile_distace_.clear();
-	checked_tile_.clear();
+	tile_distance_.clear();
+	checked_tiles_.clear();
 
 	for (auto x = 0; x < map->GetWidth(); ++x)
 	{
@@ -152,8 +152,8 @@ void LeeAlgorithm::ResetPathMap()
 			temporary_vector_b.push_back(false);
 		}
 
-		tile_distace_.push_back(temporary_vector_i);
-		checked_tile_.push_back(temporary_vector_b);
+		tile_distance_.push_back(temporary_vector_i);
+		checked_tiles_.push_back(temporary_vector_b);
 	}
 }
 

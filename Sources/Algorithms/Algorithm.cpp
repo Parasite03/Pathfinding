@@ -2,6 +2,7 @@
 #include "../Gui/Gui.h"
 #include "LeeAlgorithm.h"
 #include "AStar.h"
+#include "Dijkstra.h"
 
 std::map<Algorithm, std::string> algorithm_names;
 std::map<Algorithm, std::unique_ptr<BaseAlgorithm>> algorithm_pointers;
@@ -14,8 +15,8 @@ void InitializeAlgorithms()
 	algorithm_names.emplace(Algorithm::AStar, "A*");
 	algorithm_pointers.emplace(Algorithm::AStar, std::unique_ptr<BaseAlgorithm>(new AStar));
 
-	//algorithm_names.emplace(Algorithm::Dijkstra, "Dijkstra");
-	//algorithm_pointers.emplace(Algorithm::Dijkstra, std::unique_ptr<BaseAlgorithm>(new Dijkstra));
+	algorithm_names.emplace(Algorithm::Dijkstra, "Dijkstra");
+	algorithm_pointers.emplace(Algorithm::Dijkstra, std::unique_ptr<BaseAlgorithm>(new Dijkstra));
 }
 
 DWORD WINAPI ProcessAlgorithm(LPVOID lpParameter)
