@@ -24,6 +24,7 @@ private:
 	void ShowCheckedTiles();
 	void InitializationLinkMatrix();
 	sf::Vector2f ConvertToVector(short vertex);
+	short ConvertToNumber(sf::Vector2f vertex);
 
 	short number_of_directions_;
 	short matrix_size_;

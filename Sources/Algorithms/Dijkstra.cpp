@@ -43,14 +43,14 @@ void Dijkstra::FindPath()
 		{
 			for (auto i = 0; i < matrix_size_; ++i)
 			{
-				if (link_matrix_.at(minimum_index).at(i) != INF)
+				if (link_matrix_.at(minimum_index).at(i) != INF && map->GetTile(ConvertToVector(i))->GetType() != TileType::Wall)
 				{
 					temporary = min + link_matrix_.at(minimum_index).at(i);
 					if (temporary < minimum_distance_.at(i))
 						minimum_distance_.at(i) = temporary;
 				}
 			}
-			ShowCheckedTiles();
+			map->GetTile(ConvertToVector(minimum_index))->SetType(TileType::Checked);
 			checked_tiles_.at(minimum_index) = true;
 		}
 
@@ -65,68 +65,116 @@ void Dijkstra::FindPath()
 	}*/
 
 	SetBackTrace();
+	ShowCheckedTiles();
 	ShowPath();
 
 }
 
+//void Dijkstra::SetBackTrace()
+//{
+//	Map* map = Map::GetMap();
+//
+//	short current_tile_position = end_tile_position_ - 1;
+//	path_map_.push_back(ConvertToVector(current_tile_position + 1));
+//
+//	SetPathLength(minimum_distance_.at(end_tile_position_ - 1));
+//	short current_weight = GetPathLength();
+//
+//	while (current_tile_position != start_tile_position_)
+//	{
+//		for (auto i = 0; i < matrix_size_; ++i)
+//			if (link_matrix_.at(current_tile_position).at(i) != 0)
+//			{
+//				int temporary = current_weight - link_matrix_.at(current_tile_position).at(i);
+//				if (temporary == minimum_distance_.at(i))
+//				{
+//					current_weight = temporary;
+//					current_tile_position = i;
+//					path_map_.push_back(ConvertToVector(i + 1));
+//				}
+//			}
+//	}
+//
+//
+//	/*std::vector<int> ver(matrix_size_);
+//	int end = end_tile_position_ - 1;
+//	ver[0] = end + 1;
+//	path_map_.push_back(ConvertToVector(end + 1));
+//	int k = 1;
+//	int weight = minimum_distance_[end];
+//
+//	while (end != start_tile_position_)
+//	{
+//		for (int i = 0; i < matrix_size_; ++i)
+//			if (link_matrix_.at(end).at(i) != 0)
+//			{
+//				int temp = weight - link_matrix_.at(end).at(i);
+//				if (temp == minimum_distance_.at(i))
+//				{
+//					weight = temp;
+//					end = i;
+//					ver.at(k) = i + 1;
+//					path_map_.push_back(ConvertToVector(i + 1));
+//					k++;
+//				}
+//			}
+// 	}
+//
+//	for (int i = 0; i < path_map_.size(); ++i)
+//	{
+//		if (i % map->GetWidth() == 0)
+//			std::cout << "\n";
+//
+//		std::cout << ver.at(i) << " ";
+//	}*/
+//}
+
 void Dijkstra::SetBackTrace()
 {
 	Map* map = Map::GetMap();
+	
+	SetPathLength(minimum_distance_.at(end_tile_position_));
+	short current_distance = GetPathLength();
 
-	short current_tile_position = end_tile_position_ - 1;
-	path_map_.push_back(ConvertToVector(current_tile_position + 1));
+	sf::Vector2f current_tile_position = ConvertToVector(end_tile_position_);
 
-	SetPathLength(minimum_distance_.at(end_tile_position_ - 1));
-	short current_weight = GetPathLength();
-
-	while (current_tile_position != start_tile_position_)
+	while (current_distance > 0)
 	{
-		for (auto i = 0; i < matrix_size_; ++i)
-			if (link_matrix_.at(current_tile_position).at(i) != 0)
+	
+		path_map_.push_back(current_tile_position);
+		current_distance--;
+
+		for (auto i = 0; i < GetNumberOfDirections(); ++i)
+		{
+			
+			short delta = ConvertToNumber(current_tile_position) + offset_.at(i);
+
+			if (i % map->GetWidth() == 0 && delta % map->GetWidth() == map->GetWidth() - 1)
+				continue;
+
+			if (i % map->GetWidth() == 5 && delta % map->GetWidth() == 0)
+				continue;
+
+			if (delta >= 0 && delta < matrix_size_ && minimum_distance_.at(delta) == current_distance)
 			{
-				int temporary = current_weight - link_matrix_.at(current_tile_position).at(i);
-				if (temporary == minimum_distance_.at(i))
-				{
-					current_weight = temporary;
-					current_tile_position = i;
-					path_map_.push_back(ConvertToVector(i + 1));
-				}
+				current_tile_position = ConvertToVector(delta);
+				break;
 			}
+
+			/*if (delta_y >= 0 && delta_x >= 0 && delta_y < map->GetHeight() && delta_x < map->GetWidth()
+				&& tile_distance_.at(delta_x).at(delta_y) == current_distance)
+			{
+				current_tile_position.y = delta_y;			
+				current_tile_position.x = delta_x;			
+				break;
+			}*/
+		}
 	}
 
+	path_map_.push_back(map->GetStart());
 
-	/*std::vector<int> ver(matrix_size_);
-	int end = end_tile_position_ - 1;
-	ver[0] = end + 1;
-	path_map_.push_back(ConvertToVector(end + 1));
-	int k = 1;
-	int weight = minimum_distance_[end];
-
-	while (end != start_tile_position_)
-	{
-		for (int i = 0; i < matrix_size_; ++i)
-			if (link_matrix_.at(end).at(i) != 0)
-			{
-				int temp = weight - link_matrix_.at(end).at(i);
-				if (temp == minimum_distance_.at(i))
-				{
-					weight = temp;
-					end = i;
-					ver.at(k) = i + 1;
-					path_map_.push_back(ConvertToVector(i + 1));
-					k++;
-				}
-			}
- 	}
-
-	for (int i = 0; i < path_map_.size(); ++i)
-	{
-		if (i % map->GetWidth() == 0)
-			std::cout << "\n";
-
-		std::cout << ver.at(i) << " ";
-	}*/
 }
+
 
 void Dijkstra::InitializationLinkMatrix()
 {
@@ -146,9 +194,7 @@ void Dijkstra::InitializationLinkMatrix()
 
 	for (auto i = 0; i < matrix_size_; ++i)
 		for (auto j = 0; j < matrix_size_; ++j)
-		{
 			link_matrix_.at(i).at(j) = INF;
-		}
 
 	for (auto i = 0; i < matrix_size_; ++i)
 		for (auto j = 0; j < GetNumberOfDirections(); ++j)
@@ -162,7 +208,7 @@ void Dijkstra::InitializationLinkMatrix()
 				continue;
 
 			if (delta >= 0 && delta < matrix_size_)
-				link_matrix_.at(i).at(delta) = 1;
+					link_matrix_.at(i).at(delta) = 1;
 		}
 
 	for (auto i = 0; i < matrix_size_; ++i)
@@ -191,7 +237,6 @@ void Dijkstra::ShowCheckedTiles()
 	for (auto i = 0; i < matrix_size_; ++i)
 		if (checked_tiles_.at(i))
 			map->GetTile(ConvertToVector(i))->SetType(TileType::Checked);
-
 }
 
 void Dijkstra::SetDirectionCount(const short number_of_directions)
@@ -234,6 +279,18 @@ sf::Vector2f Dijkstra::ConvertToVector(short vertex)
 	vector.y = vertex / map->GetWidth();
 
 	return vector;
+}
+
+short Dijkstra::ConvertToNumber(sf::Vector2f vertex)
+{
+	Map* map = Map::GetMap();
+
+	short number;
+
+	number = (int)vertex.y * map->GetWidth() + vertex.x;
+
+	return number;
+
 }
 
 Dijkstra::Dijkstra()
