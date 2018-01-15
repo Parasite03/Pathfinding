@@ -24,6 +24,7 @@ void Dijkstra::FindPath()
 	minimum_distance_.at(start_tile_position_) = 0;
 
 	short minimum_index = 0, min = 0, temporary = 0;
+	bool first = true;
 
 	do {
 
@@ -50,7 +51,10 @@ void Dijkstra::FindPath()
 						minimum_distance_.at(i) = temporary;
 				}
 			}
-			map->GetTile(ConvertToVector(minimum_index))->SetType(TileType::Checked);
+			if (first)
+				first = false;
+			else
+				map->GetTile(ConvertToVector(minimum_index))->SetType(TileType::Checked);
 			checked_tiles_.at(minimum_index) = true;
 		}
 
@@ -160,14 +164,6 @@ void Dijkstra::SetBackTrace()
 				current_tile_position = ConvertToVector(delta);
 				break;
 			}
-
-			/*if (delta_y >= 0 && delta_x >= 0 && delta_y < map->GetHeight() && delta_x < map->GetWidth()
-				&& tile_distance_.at(delta_x).at(delta_y) == current_distance)
-			{
-				current_tile_position.y = delta_y;			
-				current_tile_position.x = delta_x;			
-				break;
-			}*/
 		}
 	}
 
@@ -226,7 +222,7 @@ void Dijkstra::ShowPath()
 	map->GetTile(map->GetStart())->SetType(TileType::Start);
 	map->GetTile(map->GetEnd())->SetType(TileType::End);
 
-	for (auto i = 1; i < path_map_.size(); ++i)
+	for (auto i = 1; i < path_map_.size() - 1; ++i)
 		map->GetTile(path_map_.at(i))->SetType(TileType::Path);
 }
 
