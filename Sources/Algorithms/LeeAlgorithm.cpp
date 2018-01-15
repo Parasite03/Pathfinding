@@ -10,7 +10,7 @@ void LeeAlgorithm::FindPath()
 	Map* map = Map::GetMap();
 	sf::Vector2f start_position = Map::GetMap()->GetStart();
 	sf::Vector2f end_position = Map::GetMap()->GetEnd();
-	short number_of_directions = 8;
+	short number_of_directions = Gui::Get8Directions() ? 8 : 4;
 
 	// Start/end tile - wall, impossible to determine the path
 	if (map->GetTile(map->GetStart())->GetType() == TileType::Wall ||
