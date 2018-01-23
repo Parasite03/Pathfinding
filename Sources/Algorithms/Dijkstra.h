@@ -9,20 +9,19 @@ public:
 	~Dijkstra();
 
 	void FindPath() override;
-
-	void SetDirectionCount(const short number_of_directions);
-	
-	void SetPathLength(const short path_length);
-
 	unsigned char GetNumberOfDirections();
 	short GetPathLength();
+	void ShowCheckedTiles();
+	void ShowPath();
 
 private:
 
+	void SetDirectionCount(const short number_of_directions);
+	void SetPathLength(const short path_length);
 	void SetBackTrace();
-	void ShowPath();
-	void ShowCheckedTiles();
+	
 	void InitializationLinkMatrix();
+	
 	sf::Vector2f ConvertToVector(short vertex);
 	short ConvertToNumber(sf::Vector2f vertex);
 

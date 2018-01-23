@@ -8,17 +8,18 @@ public:
 	~LeeAlgorithm();
 
 	void FindPath() override;
-	void SetDirectionCount(const short number_of_directions);
-	void SetPathLength(const short path_length);
 
+	void ShowPath();
+	void ShowCheckedTiles();
+	
 	unsigned char GetNumberOfDirections();
 	short GetPathLength();
 
 private:
 
+	void SetPathLength(const short path_length);
+	void SetDirectionCount(const short number_of_directions);
 	void SetBackTrace();
-	void ShowPath();
-	void ShowCheckedTiles();
 	void ResetPathMap();
 
 	short number_of_directions_;

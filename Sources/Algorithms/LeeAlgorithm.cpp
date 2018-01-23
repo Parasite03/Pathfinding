@@ -48,15 +48,15 @@ void LeeAlgorithm::FindPath()
 						if (delta_y >= 0 && delta_x >= 0 && delta_y < map->GetHeight() && delta_x < map->GetWidth()
 							&& tile_distance_.at(delta_x).at(delta_y) == -1)
 						{
+							map->GetTile(x, y)->SetType(TileType::Checked);
 							open_tiles = true;												// Unmarked tiles found
-							checked_tiles_.at(delta_x).at(delta_y) = true;		// Save tagged tiles
+							checked_tiles_.at(delta_x).at(delta_y) = true;					// Save tagged tiles
 							tile_distance_.at(delta_x).at(delta_y) = current_distance + 1;
 
 						}
 					}
 				}
 			}
-		ShowCheckedTiles();
 		current_distance++;			// Propagation of the wave
 	} while (open_tiles && tile_distance_.at(map->GetEnd().x).at(map->GetEnd().y) == -1);
 
@@ -91,7 +91,7 @@ void LeeAlgorithm::SetBackTrace()
 		{
 			// Find the coordinates of neighboring tiles (in n directions)
 			short delta_y = current_tile_position.y + offset_by_y_.at(i),
-				delta_x = current_tile_position.x + offset_by_x_.at(i);
+				  delta_x = current_tile_position.x + offset_by_x_.at(i);
 
 			if (delta_y >= 0 && delta_x >= 0 && delta_y < map->GetHeight() && delta_x < map->GetWidth()
 				&& tile_distance_.at(delta_x).at(delta_y) == current_distance)
