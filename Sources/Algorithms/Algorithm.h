@@ -5,6 +5,7 @@
 enum class Algorithm
 {
 	Lee,
+	SecondLee,
 	AStar,
 	Dijkstra
 };

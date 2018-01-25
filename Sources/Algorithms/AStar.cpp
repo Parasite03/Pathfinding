@@ -9,7 +9,7 @@ void AStar::FindPath()
 {
 	Map* map = Map::GetMap();
 
-	setWorldSize({ 50, 50 });
+	setWorldSize({ map->GetWidth(), map->GetHeight() });
 	setDiagonalMovement();
 	setHeuristic(&Heuristic::manhattan);
 	setCollisionMap();
@@ -18,39 +18,46 @@ void AStar::FindPath()
 	NodeSet openSet, closedSet;
 	openSet.insert(new Node(ftoi(map->GetStart())));
 
-	while (!openSet.empty()) {
+	while (!openSet.empty()) 
+	{
 		current = *openSet.begin();
-		for (auto node : openSet) {
-			if (node->getScore() <= current->getScore()) {
+		for (auto node : openSet) 
+		{
+			if (node->getScore() <= current->getScore()) 
+			{
 				current = node;
 			}
 		}
 
-		if (current->coordinates_ == ftoi(map->GetEnd())) {
+		if (current->coordinates_ == ftoi(map->GetEnd())) 
+		{
 			break;
 		}
 
 		closedSet.insert(current);
 		openSet.erase(std::find(openSet.begin(), openSet.end(), current));
 
-		for (uint i = 0; i < directions_; ++i) {
+		for (uint i = 0; i < directions_; ++i) 
+		{
 			sf::Vector2i newCoordinates(current->coordinates_ + direction_[i]);
-			if (detectCollision(newCoordinates) ||
-				findNodeOnList(closedSet, newCoordinates)) {
+			if (detectCollision(newCoordinates) || findNodeOnList(closedSet, newCoordinates)) 
+			{
 				continue;
 			}
 
 			uint totalCost = current->G_ + ((i < 4) ? 10 : 14);
 
 			Node *successor = findNodeOnList(openSet, newCoordinates);
-			if (successor == nullptr) {
+			if (successor == nullptr) 
+			{
 				successor = new Node(newCoordinates, current);
 				successor->G_ = totalCost;
 				successor->H_ = heuristic_(successor->coordinates_, ftoi(map->GetEnd()));
 				map->GetTile(itof(successor->coordinates_))->SetType(TileType::Checked);
 				openSet.insert(successor);
 			}
-			else if (totalCost < successor->G_) {
+			else if (totalCost < successor->G_) 
+			{
 				successor->parent_ = current;
 				successor->G_ = totalCost;
 			}

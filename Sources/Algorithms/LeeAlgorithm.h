@@ -1,4 +1,5 @@
 #pragma once
+
 #include "BaseAlgorithm.h"
 
 class LeeAlgorithm : public BaseAlgorithm
@@ -32,4 +33,3 @@ private:
 	std::vector<short> offset_by_x_;
 	std::vector<short> offset_by_y_;
 };
-
