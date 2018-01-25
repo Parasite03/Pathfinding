@@ -137,12 +137,12 @@ void LeeAlgorithm::ResetPathMap()
 	tile_distance_.clear();
 	checked_tiles_.clear();
 
-	for (auto x = 0; x < map->GetWidth(); ++x)
+	for (auto y = 0; y < map->GetHeight(); ++y)
 	{
 		std::vector<int> temporary_vector_i;
 		std::vector<bool> temporary_vector_b;
 
-		for (auto y = 0; y < map->GetHeight(); ++y)
+		for (auto x = 0; x < map->GetWidth(); ++x)
 		{
 			if (map->GetTile(x, y)->GetType() == TileType::Wall)
 				temporary_vector_i.push_back(-2);
