@@ -1,13 +1,12 @@
 #include "Gui.h"
 #include <Map>
-
+#include <sstream>
 #include "../../Clock.h"
 #include "../ImGui/imgui.h"
 #include "../ImGui/imgui-SFML.h"
 #include "../Map/MapRenderer.h"
 #include "../Map/Map.h"
 #include "../Utilities/FileBrowser.h"
-#include "../Algorithms/LeeAlgorithm.h"
 #include "../Algorithms/Algorithm.h"
 
 sf::RenderWindow* Gui::window_;
@@ -19,9 +18,10 @@ sf::Texture Gui::end_;
 Algorithm Gui::selected_algorithm_;
 
 sf::Time Gui::run_time_;
-DWORDLONG Gui::virtual_mem_used_passive_;
-DWORDLONG Gui::virtual_mem_used_active_;
+double Gui::memory_baseline_;
+double Gui::memory_used_;
 bool Gui::use_8_directions_;
+bool Gui::is_running_;
 char width[8] = "50", height[8] = "50";
 
 Gui::Gui()
@@ -38,7 +38,9 @@ void Gui::Initialize(sf::RenderWindow* window)
 {
 	ImGui::SFML::Init(*window);
 	window_ = window;
-	use_8_directions_ = false;
+	use_8_directions_ = true;
+	is_running_ = false;
+	memory_used_ = 0;
 
 	wall_.loadFromFile("./Data/Textures/wall.png");
 	blank_.loadFromFile("./Data/Textures/blank.png");
@@ -119,8 +121,11 @@ void Gui::Update()
 
 	if (ImGui::Button("Find Path"))
 	{
-		Map::GetMap()->ClearAlgorithmResults();
-		CreateThread(nullptr, 0, &ProcessAlgorithm, nullptr, 0, nullptr);
+		if (!is_running_)
+		{
+			Map::GetMap()->ClearAlgorithmResults();
+			CreateThread(nullptr, 0, &ProcessAlgorithm, nullptr, 0, nullptr);
+		}
 	}
 
 	ImGui::SameLine();
@@ -129,25 +134,23 @@ void Gui::Update()
 		Map::GetMap()->ClearAlgorithmResults();
 	}
 
-	ImGui::Checkbox("Use 8 directions", &use_8_directions_);
+	ImGui::Checkbox("8 Directions", &use_8_directions_);
 
 	char time[15];
-	char memory_active[15];
-	char memory_passive[15];
+
+	std::stringstream ss(std::stringstream::in | std::stringstream::out);
+	ss << memory_used_;
+	std::string memory_str = ss.str();
 
 	sprintf_s(time, "%f", run_time_.asSeconds());
-	_itoa_s(virtual_mem_used_active_, memory_active, 10);
-	_itoa_s(virtual_mem_used_active_ - virtual_mem_used_passive_, memory_passive, 10);
 
 	ImGui::Text("Time:"); ImGui::SameLine();
 	ImGui::Text(time); ImGui::SameLine();
 	ImGui::Text("seconds");
 
-	ImGui::Text("Total Memory Use:"); ImGui::SameLine();
-	ImGui::Text(memory_active);
-
-	ImGui::Text("Memory Use Increase:"); ImGui::SameLine();
-	ImGui::Text(memory_passive);
+	ImGui::Text("Memory:"); ImGui::SameLine();
+	ImGui::Text(memory_str.c_str()); ImGui::SameLine();
+	ImGui::Text("MB");
 
 	ImGui::End();
 }
@@ -162,20 +165,21 @@ void Gui::SetRunTime(sf::Time time)
 	run_time_ = time;
 }
 
-void Gui::SetVirtualMemUsedActive(DWORDLONG mem)
+void Gui::SetRunning(bool is_running)
 {
-	virtual_mem_used_active_ = mem;
+	is_running_ = is_running;
 }
 
-DWORDLONG Gui::GetVirtualMemUsedActive()
+void Gui::SetMemoryBaseline(double memory)
 {
-	return virtual_mem_used_active_;
+	memory_baseline_ = memory;
+	memory_used_ = memory;
 }
 
-
-void Gui::SetVirtualMemUsedPassive(DWORDLONG mem)
+void Gui::SetMemory(double memory)
 {
-	virtual_mem_used_passive_ = mem;
+	if (memory_baseline_ - memory > memory_used_)
+		memory_used_ = memory_baseline_ - memory;
 }
 
 bool Gui::Get8Directions()

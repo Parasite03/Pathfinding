@@ -176,6 +176,7 @@
     <ClInclude Include="Sources\Algorithms\AStar.h" />
     <ClInclude Include="Sources\Algorithms\BaseAlgorithm.h" />
     <ClInclude Include="Sources\Algorithms\Dijkstra.h" />
+    <ClInclude Include="Sources\Algorithms\JumpPointSearch.h" />
     <ClInclude Include="Sources\Algorithms\LeeAlgorithm(ver.2).h" />
     <ClInclude Include="Sources\Algorithms\LeeAlgorithm.h" />
     <ClInclude Include="Sources\Gui\Gui.h" />
@@ -193,6 +194,7 @@
     <ClInclude Include="Sources\Map\TileType.h" />
     <ClInclude Include="Sources\Utilities\EventManager.h" />
     <ClInclude Include="Sources\Utilities\FileBrowser.h" />
+    <ClInclude Include="Sources\Utilities\MemoryUsage.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
@@ -202,6 +204,7 @@
     <ClCompile Include="Sources\Algorithms\AStar.cpp" />
     <ClCompile Include="Sources\Algorithms\BaseAlgorithm.cpp" />
     <ClCompile Include="Sources\Algorithms\Dijkstra.cpp" />
+    <ClCompile Include="Sources\Algorithms\JumpPointSearch.cpp" />
     <ClCompile Include="Sources\Algorithms\LeeAlgorithm(ver.2).cpp" />
     <ClCompile Include="Sources\Algorithms\LeeAlgorithm.cpp" />
     <ClCompile Include="Sources\Gui\Gui.cpp" />
@@ -215,6 +218,7 @@
     <ClCompile Include="Sources\Map\Tile.cpp" />
     <ClCompile Include="Sources\Utilities\EventManager.cpp" />
     <ClCompile Include="Sources\Utilities\FileBrowser.cpp" />
+    <ClCompile Include="Sources\Utilities\MemoryUsage.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

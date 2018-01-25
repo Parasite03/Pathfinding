@@ -96,6 +96,12 @@
     <ClInclude Include="Sources\Algorithms\LeeAlgorithm(ver.2).h">
       <Filter>Sources\Algorithms</Filter>
     </ClInclude>
+    <ClInclude Include="Sources\Algorithms\JumpPointSearch.h">
+      <Filter>Sources\Algorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Utilities\MemoryUsage.h">
+      <Filter>Sources\Utilities</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Pathfinding.cpp">
@@ -154,6 +160,12 @@
     </ClCompile>
     <ClCompile Include="Sources\Algorithms\LeeAlgorithm(ver.2).cpp">
       <Filter>Sources\Algorithms</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Algorithms\JumpPointSearch.cpp">
+      <Filter>Sources\Algorithms</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Utilities\MemoryUsage.cpp">
+      <Filter>Sources\Utilities</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

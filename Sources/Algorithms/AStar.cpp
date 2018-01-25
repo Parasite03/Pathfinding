@@ -4,10 +4,15 @@
 #include "../Map/Tile.h"
 #include "../Gui/Gui.h"
 #include <algorithm>
+#include "../Utilities/MemoryUsage.h"
 
 void AStar::FindPath()
 {
 	Map* map = Map::GetMap();
+
+	Gui::SetRunning(true);
+	sf::Clock clock;
+	Gui::SetMemoryBaseline(GetVirtualMemoryUsage());
 
 	setWorldSize({ map->GetWidth(), map->GetHeight() });
 	setDiagonalMovement();
@@ -17,6 +22,8 @@ void AStar::FindPath()
 	Node *current = nullptr;
 	NodeSet openSet, closedSet;
 	openSet.insert(new Node(ftoi(map->GetStart())));
+
+	clock.restart();
 
 	while (!openSet.empty()) 
 	{
@@ -61,6 +68,7 @@ void AStar::FindPath()
 				successor->parent_ = current;
 				successor->G_ = totalCost;
 			}
+			Gui::SetMemory(GetVirtualMemoryUsage());
 		}
 	}
 
@@ -76,6 +84,8 @@ void AStar::FindPath()
 
 	releaseNodes(openSet);
 	releaseNodes(closedSet);
+	Gui::SetRunTime(clock.getElapsedTime());
+	Gui::SetRunning(false);
 }
 
 void AStar::addCollision(sf::Vector2i coordinates)

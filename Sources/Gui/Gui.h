@@ -17,10 +17,11 @@ private:
 	static Algorithm selected_algorithm_;
 
 	static sf::Time run_time_;
-	static DWORDLONG virtual_mem_used_passive_;
-	static DWORDLONG virtual_mem_used_active_;
+	static double memory_baseline_;
+	static double memory_used_;
 	
 	static bool use_8_directions_;
+	static bool is_running_;
 
 public:
 	static void Initialize(sf::RenderWindow* window);
@@ -28,9 +29,10 @@ public:
 	static void Draw();
 
 	static void SetRunTime(sf::Time time);
-	static void SetVirtualMemUsedActive(DWORDLONG mem);
-	static DWORDLONG GetVirtualMemUsedActive();
-	static void SetVirtualMemUsedPassive(DWORDLONG mem);
+	static void SetRunning(bool is_running);
+
+	static void SetMemoryBaseline(double memory);
+	static void SetMemory(double memory);
 
 	static bool Get8Directions();
 	static Algorithm GetSelectedAlgorithm();
