@@ -1,35 +1,48 @@
 #pragma once
 
 #include "BaseAlgorithm.h"
+#include <functional>
+#include <set>
 
 class LeeAlgorithm : public BaseAlgorithm
 {
 public:
-	LeeAlgorithm();
-	~LeeAlgorithm();
+	using uint = unsigned int;
+	using CoordinateList = std::vector<sf::Vector2i>;
+
+	struct Node
+	{
+		uint g_cost_;
+		sf::Vector2i coordinates_;
+		Node *parent_;
+
+		Node(sf::Vector2i coordinates, Node *parent = nullptr);
+		Node(sf::Vector2i coordinates, uint g_cost, Node *parent = nullptr);
+		uint getScore();
+	};
+
+	using NodeSet = std::set<Node*>;
 
 	void FindPath() override;
 
-	void ShowPath();
-	void ShowCheckedTiles();
-	
-	unsigned char GetNumberOfDirections();
-	short GetPathLength();
+	void addCollision(sf::Vector2i coordinates);
+	bool detectCollision(sf::Vector2i coordinates);
+	void removeCollision(sf::Vector2i coordinates);
+	void clearCollisions();
+
+	Node* findNodeOnList(NodeSet& nodes, sf::Vector2i coordinates);
+	void releaseNodes(NodeSet& nodes);
+
+	void setWorldSize(sf::Vector2i worldSize);
+	void setCollisionMap();
+	void setDiagonalMovement();
+
+	sf::Vector2i ftoi(sf::Vector2f vector);
+	sf::Vector2f itof(sf::Vector2i vector);
 
 private:
+	CoordinateList direction_, walls_;
+	sf::Vector2i world_size_;
+	uint directions_;
 
-	void SetPathLength(const short path_length);
-	void SetDirectionCount(const short number_of_directions);
-	void SetBackTrace();
-	void ResetPathMap();
-
-	short number_of_directions_;
-	short path_length_;
-
-	std::vector<sf::Vector2f> path_map_;
-	std::vector<std::vector<int>> tile_distance_;
-	std::vector<std::vector<bool>> checked_tiles_;
-
-	std::vector<short> offset_by_x_;
-	std::vector<short> offset_by_y_;
 };

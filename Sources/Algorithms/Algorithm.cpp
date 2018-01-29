@@ -1,7 +1,7 @@
 #include "Algorithm.h"
 #include "../Gui/Gui.h"
 #include "LeeAlgorithm.h"
-#include "LeeAlgorithm(ver.2).h"
+#include "LeeAlgorithmV2.h"
 #include "AStar.h"
 #include "Dijkstra.h"
 
@@ -20,7 +20,7 @@ void InitializeAlgorithms()
 	algorithm_pointers.emplace(Algorithm::Lee, std::unique_ptr<BaseAlgorithm>(new LeeAlgorithm));
 
 	algorithm_names.emplace(Algorithm::SecondLee, "Wave v2");
-	algorithm_pointers.emplace(Algorithm::SecondLee, std::unique_ptr<BaseAlgorithm>(new SecondLeeAlgorithm));
+	algorithm_pointers.emplace(Algorithm::SecondLee, std::unique_ptr<BaseAlgorithm>(new LeeAlgorithmV2));
 }
 
 DWORD WINAPI ProcessAlgorithm(LPVOID lpParameter)

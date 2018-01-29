@@ -155,6 +155,8 @@ void AStar::setCollisionMap()
 {
 	Map* map = Map::GetMap();
 
+	clearCollisions();
+
 	for (auto x = 0; x < map->GetWidth(); ++x)
 		for (auto y = 0; y < map->GetHeight(); ++y)
 			if (map->GetTile(x, y)->GetType() == TileType::Wall)

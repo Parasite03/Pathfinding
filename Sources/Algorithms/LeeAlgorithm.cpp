@@ -3,202 +3,181 @@
 #include "../Map/Map.h"
 #include "../Map/Tile.h"
 #include "../Gui/Gui.h"
+#include <algorithm>
 
 void LeeAlgorithm::FindPath()
 {
-	// Initialization
-	Map* map = Map::GetMap();
-	sf::Vector2f start_position = Map::GetMap()->GetStart();
-	sf::Vector2f end_position = Map::GetMap()->GetEnd();
-	short number_of_directions = Gui::Get8Directions() ? 8 : 4;
-
-	// Start/end tile - wall, impossible to determine the path
-	if (map->GetTile(map->GetStart())->GetType() == TileType::Wall ||
-		map->GetTile(map->GetEnd())->GetType() == TileType::Wall) return;
-
-	// Number of directions
-	SetDirectionCount(number_of_directions);
-
-	bool open_tiles;
-	short current_distance = 0;
-
-	// Reset previous result
-	ResetPathMap();
-
-	// Start tile is marked 0
-	tile_distance_.at(map->GetStart().x).at(map->GetStart().y) = current_distance;
-
-	// Wave expansion
-	do {
-		open_tiles = false;		 // We assume that all free tiles have already been tested
-
-		for (auto y = 0; y < map->GetHeight(); ++y)
-			for (auto x = 0; x < map->GetWidth(); ++x)
-			{
-				if (tile_distance_.at(x).at(y) == current_distance)		// Tile is marked current_distance
-				{
-					// Note all unlabelled neighbors (in n directions) - current_distance + 1
-
-					for (auto i = 0; i < GetNumberOfDirections(); ++i)
-					{
-						// Find the coordinates of neighboring tiles (in n directions)
-						short delta_y = y + offset_by_y_.at(i),
-							delta_x = x + offset_by_x_.at(i);
-
-						if (delta_y >= 0 && delta_x >= 0 && delta_y < map->GetHeight() && delta_x < map->GetWidth()
-							&& tile_distance_.at(delta_x).at(delta_y) == -1)
-						{
-							map->GetTile(x, y)->SetType(TileType::Checked);
-							open_tiles = true;												// Unmarked tiles found
-							checked_tiles_.at(delta_x).at(delta_y) = true;					// Save tagged tiles
-							tile_distance_.at(delta_x).at(delta_y) = current_distance + 1;
-
-						}
-					}
-				}
-			}
-		current_distance++;			// Propagation of the wave
-	} while (open_tiles && tile_distance_.at(map->GetEnd().x).at(map->GetEnd().y) == -1);
-
-	if (tile_distance_.at(map->GetEnd().x).at(map->GetEnd().y) == -1) return;			// Path not found
-
-	SetBackTrace();
-	//ShowCheckedTiles();
-	ShowPath();
-
-}
-
-void LeeAlgorithm::SetBackTrace()
-{
 	Map* map = Map::GetMap();
 
-	// The length of the shortest path from the start tile to the final
-	SetPathLength(tile_distance_.at(map->GetEnd().x).at(map->GetEnd().y));
+	Gui::SetRunning(true);
+	sf::Clock clock;
 
-	// Current coordinates - coordinates of the end tile
-	sf::Vector2f current_tile_position = map->GetEnd();
+	setWorldSize({ map->GetWidth(), map->GetHeight() });
+	setDiagonalMovement();
+	setCollisionMap();
+	
+	uint current_distance = 1;
+	bool open_tiles = false;
 
-	short current_distance = GetPathLength();
+	Node *current = nullptr;
+	NodeSet openSet, closedSet;
+	openSet.insert(new Node(ftoi(map->GetStart()), current_distance));
 
-	// Looking for a path starting at the end tile
-	while (current_distance > 0)
+	clock.restart();
+
+	while (!openSet.empty())
 	{
-		// Save the current coordinates in the path
-		path_map_.push_back(current_tile_position);
-		current_distance--;
-
-		for (auto i = 0; i < GetNumberOfDirections(); ++i)
+		current = *openSet.begin();
+		for (auto node : openSet)
 		{
-			// Find the coordinates of neighboring tiles (in n directions)
-			short delta_y = current_tile_position.y + offset_by_y_.at(i),
-				  delta_x = current_tile_position.x + offset_by_x_.at(i);
-
-			if (delta_y >= 0 && delta_x >= 0 && delta_y < map->GetHeight() && delta_x < map->GetWidth()
-				&& tile_distance_.at(delta_x).at(delta_y) == current_distance)
+			if (node->getScore() == current_distance)
 			{
-				current_tile_position.y = delta_y;			// The current coordinates are the coordinates of the tile, labeled current_distance
-				current_tile_position.x = delta_x;			// Go to the tile, which is 1 closer to the start
-				break;
+				current = node;
+				open_tiles = true;
+			}
+		}
+
+		if (!open_tiles)
+			current_distance++;
+
+		if (current->coordinates_ == ftoi(map->GetEnd()))
+		{
+			break;
+		}
+
+		closedSet.insert(current);
+		openSet.erase(std::find(openSet.begin(), openSet.end(), current));
+
+		for (uint i = 0; i < directions_; ++i)
+		{
+			sf::Vector2i newCoordinates(current->coordinates_ + direction_[i]);
+			if (detectCollision(newCoordinates) || findNodeOnList(closedSet, newCoordinates))
+			{
+				continue;
+			}
+
+			Node *successor = findNodeOnList(openSet, newCoordinates);
+			if (successor == nullptr)
+			{
+				successor = new Node(newCoordinates, current_distance + 1, current);
+				map->GetTile(itof(successor->coordinates_))->SetType(TileType::Checked);
+				openSet.insert(successor);
 			}
 		}
 	}
 
-	// We store the coordinates of the start tile in the path
-	path_map_.push_back(map->GetStart());
-
-}
-
-void LeeAlgorithm::ShowPath()
-{
-	Map* map = Map::GetMap();
+	CoordinateList path;
+	while (current != nullptr) {
+		path.push_back(current->coordinates_);
+		map->GetTile(itof(current->coordinates_))->SetType(TileType::Path);
+		current = current->parent_;
+	}
 
 	map->GetTile(map->GetStart())->SetType(TileType::Start);
 	map->GetTile(map->GetEnd())->SetType(TileType::End);
 
-	for (auto i = 1; i < path_length_; ++i)
-		map->GetTile(path_map_.at(i))->SetType(TileType::Path);
+	releaseNodes(openSet);
+	releaseNodes(closedSet);
+	Gui::SetRunTime(clock.getElapsedTime());
+	Gui::SetRunning(false);
 }
 
-void LeeAlgorithm::ShowCheckedTiles()
+void LeeAlgorithm::addCollision(sf::Vector2i coordinates)
+{
+	walls_.push_back(coordinates);
+}
+
+bool LeeAlgorithm::detectCollision(sf::Vector2i coordinates)
+{
+	if (coordinates.x < 0 || coordinates.x >= world_size_.x ||
+		coordinates.y < 0 || coordinates.y >= world_size_.y ||
+		std::find(walls_.begin(), walls_.end(), coordinates) != walls_.end()) {
+		return true;
+	}
+	return false;
+}
+
+void LeeAlgorithm::removeCollision(sf::Vector2i coordinates)
+{
+	auto it = std::find(walls_.begin(), walls_.end(), coordinates);
+	if (it != walls_.end()) {
+		walls_.erase(it);
+	}
+}
+
+void LeeAlgorithm::clearCollisions()
+{
+	walls_.clear();
+}
+
+LeeAlgorithm::Node::Node(sf::Vector2i coordinates, Node *parent)
+{
+	parent_ = parent;
+	coordinates_ = coordinates;
+	g_cost_ = 0;
+}
+
+LeeAlgorithm::Node::Node(sf::Vector2i coordinates, uint g_cost, Node *parent)
+{
+	parent_ = parent;
+	coordinates_ = coordinates;
+	g_cost_ = g_cost;
+}
+
+LeeAlgorithm::uint LeeAlgorithm::Node::getScore()
+{
+	return g_cost_;
+}
+
+LeeAlgorithm::Node* LeeAlgorithm::findNodeOnList(NodeSet& nodes, sf::Vector2i coordinates)
+{
+	for (auto node : nodes) {
+		if (node->coordinates_ == coordinates) {
+			return node;
+		}
+	}
+	return nullptr;
+}
+
+void LeeAlgorithm::releaseNodes(NodeSet& nodes)
+{
+	for (auto it = nodes.begin(); it != nodes.end();) {
+		delete *it;
+		it = nodes.erase(it);
+	}
+}
+
+void LeeAlgorithm::setWorldSize(sf::Vector2i world_size)
+{
+	world_size_ = world_size;
+}
+
+void LeeAlgorithm::setCollisionMap()
 {
 	Map* map = Map::GetMap();
 
-	for (auto y = 0; y < map->GetHeight(); ++y)
-		for (auto x = 0; x < map->GetWidth(); ++x)
-			if (checked_tiles_.at(x).at(y))
-				map->GetTile(x, y)->SetType(TileType::Checked);
-}
-
-void LeeAlgorithm::ResetPathMap()
-{
-	Map* map = Map::GetMap();
-
-	path_map_.clear();
-	tile_distance_.clear();
-	checked_tiles_.clear();
-
-	for (auto y = 0; y < map->GetHeight(); ++y)
-	{
-		std::vector<int> temporary_vector_i;
-		std::vector<bool> temporary_vector_b;
-
-		for (auto x = 0; x < map->GetWidth(); ++x)
-		{
+	for (auto x = 0; x < map->GetWidth(); ++x)
+		for (auto y = 0; y < map->GetHeight(); ++y)
 			if (map->GetTile(x, y)->GetType() == TileType::Wall)
-				temporary_vector_i.push_back(-2);
-			else
-				temporary_vector_i.push_back(-1);
-
-			temporary_vector_b.push_back(false);
-		}
-
-		tile_distance_.push_back(temporary_vector_i);
-		checked_tiles_.push_back(temporary_vector_b);
-	}
+				addCollision({ x, y });
 }
 
-void LeeAlgorithm::SetDirectionCount(const short number_of_directions)
+void LeeAlgorithm::setDiagonalMovement()
 {
+	directions_ = (Gui::Get8Directions() ? 8 : 4);
 
-	// Number of directions
-	number_of_directions_ = number_of_directions;
-
-	// Places corresponding to neighboring tiles in n directions
-	if (GetNumberOfDirections() == 4)
-	{
-		offset_by_x_ = { 1, 0, -1, 0 };
-		offset_by_y_ = { 0, 1, 0, -1 };
-	}
-	else
-		if (GetNumberOfDirections() == 8)
-		{
-			offset_by_x_ = { 1, 0, -1, 0, 1, -1, -1, 1 };
-			offset_by_y_ = { 0, 1, 0, -1, 1, 1, -1, -1 };
-		}
-
+	direction_ = {
+		{ 0, 1 },{ 1, 0 },{ 0, -1 },{ -1, 0 },
+		{ -1, -1 },{ 1, 1 },{ -1, 1 },{ 1, -1 }
+	};
 }
 
-void LeeAlgorithm::SetPathLength(const short path_length)
+sf::Vector2i LeeAlgorithm::ftoi(sf::Vector2f vector)
 {
-	path_length_ = path_length;
+	return { (int)vector.x, (int)vector.y };
 }
 
-unsigned char LeeAlgorithm::GetNumberOfDirections()
+sf::Vector2f LeeAlgorithm::itof(sf::Vector2i vector)
 {
-	return number_of_directions_;
-}
-
-short LeeAlgorithm::GetPathLength()
-{
-	return path_length_;
-}
-
-LeeAlgorithm::LeeAlgorithm()
-{
-
-}
-
-LeeAlgorithm::~LeeAlgorithm()
-{
-
+	return { (float)vector.x, (float)vector.y };
 }
