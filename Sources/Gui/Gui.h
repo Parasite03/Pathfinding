@@ -1,4 +1,5 @@
 #pragma once
+#include <fstream>
 #include "../Algorithms/Algorithm.h"
 
 class Gui
