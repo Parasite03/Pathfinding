@@ -22,6 +22,7 @@ double Gui::memory_baseline_;
 double Gui::memory_used_;
 bool Gui::use_8_directions_;
 bool Gui::is_running_;
+int Gui::path_length_;
 char width[8] = "50", height[8] = "50";
 
 Gui::Gui()
@@ -41,6 +42,7 @@ void Gui::Initialize(sf::RenderWindow* window)
 	use_8_directions_ = true;
 	is_running_ = false;
 	memory_used_ = 0;
+	path_length_ = 0;
 
 	wall_.loadFromFile("./Data/Textures/wall.png");
 	blank_.loadFromFile("./Data/Textures/blank.png");
@@ -137,20 +139,26 @@ void Gui::Update()
 	ImGui::Checkbox("8 Directions", &use_8_directions_);
 
 	char time[15];
+	char path[15];
 
-	std::stringstream ss(std::stringstream::in | std::stringstream::out);
-	ss << memory_used_;
-	std::string memory_str = ss.str();
+	//std::stringstream ss(std::stringstream::in | std::stringstream::out);
+	//ss << memory_used_;
+	//std::string memory_str = ss.str();
 
 	sprintf_s(time, "%f", run_time_.asSeconds());
+	_itoa_s(path_length_, path, 10);
 
 	ImGui::Text("Time:"); ImGui::SameLine();
 	ImGui::Text(time); ImGui::SameLine();
 	ImGui::Text("seconds");
 
-	ImGui::Text("Memory:"); ImGui::SameLine();
-	ImGui::Text(memory_str.c_str()); ImGui::SameLine();
-	ImGui::Text("MB");
+	ImGui::Text("Path:"); ImGui::SameLine();
+	ImGui::Text(path); ImGui::SameLine();
+	(path_length_ == 1) ? ImGui::Text("tile") : ImGui::Text("tiles");
+
+	//ImGui::Text("Memory:"); ImGui::SameLine();
+	//ImGui::Text(memory_str.c_str()); ImGui::SameLine();
+	//ImGui::Text("MB");
 
 	ImGui::End();
 }
@@ -163,6 +171,11 @@ void Gui::Draw()
 void Gui::SetRunTime(sf::Time time)
 {
 	run_time_ = time;
+}
+
+void Gui::SetPathLength(int path_length)
+{
+	path_length_ = path_length;
 }
 
 void Gui::SetRunning(bool is_running)

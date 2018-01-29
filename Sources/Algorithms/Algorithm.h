@@ -4,9 +4,8 @@
 
 enum class Algorithm
 {
-	Lee,
-	SecondLee,
 	AStar,
+	Wave,
 	Dijkstra
 };
 

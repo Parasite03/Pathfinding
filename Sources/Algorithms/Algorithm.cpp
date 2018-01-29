@@ -13,14 +13,11 @@ void InitializeAlgorithms()
 	algorithm_names.emplace(Algorithm::AStar, "A*");
 	algorithm_pointers.emplace(Algorithm::AStar, std::unique_ptr<BaseAlgorithm>(new AStar));
 
+	algorithm_names.emplace(Algorithm::Wave, "Wave");
+	algorithm_pointers.emplace(Algorithm::Wave, std::unique_ptr<BaseAlgorithm>(new LeeAlgorithmV2));
+
 	algorithm_names.emplace(Algorithm::Dijkstra, "Dijkstra");
 	algorithm_pointers.emplace(Algorithm::Dijkstra, std::unique_ptr<BaseAlgorithm>(new Dijkstra));
-
-	algorithm_names.emplace(Algorithm::Lee, "Wave");
-	algorithm_pointers.emplace(Algorithm::Lee, std::unique_ptr<BaseAlgorithm>(new LeeAlgorithm));
-
-	algorithm_names.emplace(Algorithm::SecondLee, "Wave v2");
-	algorithm_pointers.emplace(Algorithm::SecondLee, std::unique_ptr<BaseAlgorithm>(new LeeAlgorithmV2));
 }
 
 DWORD WINAPI ProcessAlgorithm(LPVOID lpParameter)

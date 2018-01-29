@@ -22,6 +22,7 @@ private:
 	
 	static bool use_8_directions_;
 	static bool is_running_;
+	static int path_length_;
 
 public:
 	static void Initialize(sf::RenderWindow* window);
@@ -29,6 +30,7 @@ public:
 	static void Draw();
 
 	static void SetRunTime(sf::Time time);
+	static void SetPathLength(int path_length);
 	static void SetRunning(bool is_running);
 
 	static void SetMemoryBaseline(double memory);
