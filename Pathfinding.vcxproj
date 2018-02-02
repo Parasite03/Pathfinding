@@ -176,9 +176,8 @@
     <ClInclude Include="Sources\Algorithms\AStar.h" />
     <ClInclude Include="Sources\Algorithms\BaseAlgorithm.h" />
     <ClInclude Include="Sources\Algorithms\Dijkstra.h" />
-    <ClInclude Include="Sources\Algorithms\JumpPointSearch.h" />
-    <ClInclude Include="Sources\Algorithms\LeeAlgorithmV2.h" />
     <ClInclude Include="Sources\Algorithms\LeeAlgorithm.h" />
+    <ClInclude Include="Sources\Algorithms\JPS.h" />
     <ClInclude Include="Sources\Gui\Gui.h" />
     <ClInclude Include="Sources\ImGui\imconfig.h" />
     <ClInclude Include="Sources\ImGui\imgui-SFML.h" />
@@ -204,9 +203,8 @@
     <ClCompile Include="Sources\Algorithms\AStar.cpp" />
     <ClCompile Include="Sources\Algorithms\BaseAlgorithm.cpp" />
     <ClCompile Include="Sources\Algorithms\Dijkstra.cpp" />
-    <ClCompile Include="Sources\Algorithms\JumpPointSearch.cpp" />
-    <ClCompile Include="Sources\Algorithms\LeeAlgorithmV2.cpp" />
     <ClCompile Include="Sources\Algorithms\LeeAlgorithm.cpp" />
+    <ClCompile Include="Sources\Algorithms\JPS.cpp" />
     <ClCompile Include="Sources\Gui\Gui.cpp" />
     <ClCompile Include="Sources\ImGui\imgui-SFML.cpp" />
     <ClCompile Include="Sources\ImGui\imgui.cpp" />

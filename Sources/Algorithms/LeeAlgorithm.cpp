@@ -1,9 +1,11 @@
 #include "LeeAlgorithm.h"
 
+#include <algorithm>
+#include <fstream>
+
 #include "../Map/Map.h"
 #include "../Map/Tile.h"
 #include "../Gui/Gui.h"
-#include <algorithm>
 
 void LeeAlgorithm::FindPath()
 {
@@ -14,152 +16,100 @@ void LeeAlgorithm::FindPath()
 
 	setWorldSize({ map->GetWidth(), map->GetHeight() });
 	setDiagonalMovement();
-	setCollisionMap();
-	
+
+	path_map_.clear();
+	g_cost_.clear();
+
+	bool first = true;
+
+	for (auto x = 0; x < map->GetWidth(); ++x)
+	{
+		std::vector<uint> vector;
+		for (auto y = 0; y < map->GetHeight(); ++y)
+		{
+			vector.push_back(0);
+		}
+		g_cost_.push_back(vector);
+	}
+
 	uint current_distance = 1;
 	bool open_tiles = false;
 
-	Node *current = nullptr;
-	NodeSet openSet, closedSet;
-	openSet.insert(new Node(ftoi(map->GetStart()), current_distance));
-
 	clock.restart();
 
-	while (!openSet.empty())
+	g_cost_.at(map->GetStart().x).at(map->GetStart().y) = current_distance;
+
+	do
 	{
-		current = *openSet.begin();
-		for (auto node : openSet)
-		{
-			if (node->getScore() == current_distance)
+		open_tiles = false;
+
+		for (auto x = 0; x < world_size_.x; ++x)
+			for (auto y = 0; y < world_size_.y; ++y)
 			{
-				current = node;
-				open_tiles = true;
+				sf::Vector2i current_coordinate = { x, y };
+
+				if (g_cost_.at(x).at(y) == current_distance)
+				{
+					for (auto i = 0; i < directions_; ++i)
+					{
+						sf::Vector2i new_coordinates(current_coordinate + direction_.at(i));
+
+						if (new_coordinates.x < 0 || new_coordinates.y < 0 ||
+							new_coordinates.x >= map->GetWidth() || new_coordinates.y >= map->GetHeight())
+							continue;
+						else
+							if (map->GetTile(new_coordinates.x, new_coordinates.y)->GetType() == TileType::Checked ||
+								map->GetTile(new_coordinates.x, new_coordinates.y)->GetType() == TileType::Wall)
+								continue;
+
+						if (first)
+							first = false;
+						else
+							map->GetTile(new_coordinates.x, new_coordinates.y)->SetType(TileType::Checked);
+						g_cost_.at(new_coordinates.x).at(new_coordinates.y) = current_distance + 1;
+						open_tiles = true;
+					}
+				}
 			}
-		}
+		++current_distance;
+	} while (open_tiles && g_cost_.at(map->GetEnd().x).at(map->GetEnd().y) == 0);
 
-		if (!open_tiles)
-			current_distance++;
+	Gui::SetPathLength(current_distance);
 
-		if (current->coordinates_ == ftoi(map->GetEnd()))
+	sf::Vector2i current_coordinate = ftoi(map->GetEnd());
+
+	while (current_distance > 0)
+	{
+		path_map_.push_back(itof(current_coordinate));
+		current_distance--;
+
+		for (auto i = 0; i < directions_; ++i)
 		{
-			break;
-		}
+			sf::Vector2i new_coordinates(current_coordinate + direction_.at(i));
 
-		closedSet.insert(current);
-		openSet.erase(std::find(openSet.begin(), openSet.end(), current));
-
-		for (uint i = 0; i < directions_; ++i)
-		{
-			sf::Vector2i newCoordinates(current->coordinates_ + direction_[i]);
-			if (detectCollision(newCoordinates) || findNodeOnList(closedSet, newCoordinates))
+			if (new_coordinates.x >= 0 && new_coordinates.y >= 0 &&
+				new_coordinates.x < map->GetWidth() && new_coordinates.y < map->GetHeight() &&
+				g_cost_.at(new_coordinates.x).at(new_coordinates.y) == current_distance)
 			{
-				continue;
-			}
-
-			Node *successor = findNodeOnList(openSet, newCoordinates);
-			if (successor == nullptr)
-			{
-				successor = new Node(newCoordinates, current_distance + 1, current);
-				map->GetTile(itof(successor->coordinates_))->SetType(TileType::Checked);
-				openSet.insert(successor);
+				current_coordinate = new_coordinates;
+				break;
 			}
 		}
 	}
 
-	CoordinateList path;
-	while (current != nullptr) {
-		path.push_back(current->coordinates_);
-		map->GetTile(itof(current->coordinates_))->SetType(TileType::Path);
-		current = current->parent_;
-	}
+	Gui::SetRunTime(clock.getElapsedTime());
+	Gui::SetRunning(false);
 
 	map->GetTile(map->GetStart())->SetType(TileType::Start);
 	map->GetTile(map->GetEnd())->SetType(TileType::End);
 
-	releaseNodes(openSet);
-	releaseNodes(closedSet);
-	Gui::SetRunTime(clock.getElapsedTime());
-	Gui::SetRunning(false);
-}
-
-void LeeAlgorithm::addCollision(sf::Vector2i coordinates)
-{
-	walls_.push_back(coordinates);
-}
-
-bool LeeAlgorithm::detectCollision(sf::Vector2i coordinates)
-{
-	if (coordinates.x < 0 || coordinates.x >= world_size_.x ||
-		coordinates.y < 0 || coordinates.y >= world_size_.y ||
-		std::find(walls_.begin(), walls_.end(), coordinates) != walls_.end()) {
-		return true;
-	}
-	return false;
-}
-
-void LeeAlgorithm::removeCollision(sf::Vector2i coordinates)
-{
-	auto it = std::find(walls_.begin(), walls_.end(), coordinates);
-	if (it != walls_.end()) {
-		walls_.erase(it);
-	}
-}
-
-void LeeAlgorithm::clearCollisions()
-{
-	walls_.clear();
-}
-
-LeeAlgorithm::Node::Node(sf::Vector2i coordinates, Node *parent)
-{
-	parent_ = parent;
-	coordinates_ = coordinates;
-	g_cost_ = 0;
-}
-
-LeeAlgorithm::Node::Node(sf::Vector2i coordinates, uint g_cost, Node *parent)
-{
-	parent_ = parent;
-	coordinates_ = coordinates;
-	g_cost_ = g_cost;
-}
-
-LeeAlgorithm::uint LeeAlgorithm::Node::getScore()
-{
-	return g_cost_;
-}
-
-LeeAlgorithm::Node* LeeAlgorithm::findNodeOnList(NodeSet& nodes, sf::Vector2i coordinates)
-{
-	for (auto node : nodes) {
-		if (node->coordinates_ == coordinates) {
-			return node;
-		}
-	}
-	return nullptr;
-}
-
-void LeeAlgorithm::releaseNodes(NodeSet& nodes)
-{
-	for (auto it = nodes.begin(); it != nodes.end();) {
-		delete *it;
-		it = nodes.erase(it);
-	}
+	for (auto i = 1; i < path_map_.size() ; ++i)
+		map->GetTile(path_map_.at(i))->SetType(TileType::Path);
 }
 
 void LeeAlgorithm::setWorldSize(sf::Vector2i world_size)
 {
 	world_size_ = world_size;
-}
-
-void LeeAlgorithm::setCollisionMap()
-{
-	Map* map = Map::GetMap();
-
-	for (auto x = 0; x < map->GetWidth(); ++x)
-		for (auto y = 0; y < map->GetHeight(); ++y)
-			if (map->GetTile(x, y)->GetType() == TileType::Wall)
-				addCollision({ x, y });
 }
 
 void LeeAlgorithm::setDiagonalMovement()

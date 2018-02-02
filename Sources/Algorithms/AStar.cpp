@@ -1,9 +1,10 @@
 #include "AStar.h"
 
+#include <algorithm>
+
 #include "../Map/Map.h"
 #include "../Map/Tile.h"
 #include "../Gui/Gui.h"
-#include <algorithm>
 #include "../Utilities/MemoryUsage.h"
 
 void AStar::FindPath()
@@ -12,7 +13,6 @@ void AStar::FindPath()
 
 	Gui::SetRunning(true);
 	sf::Clock clock;
-	Gui::SetMemoryBaseline(GetVirtualMemoryUsage());
 
 	setWorldSize({ map->GetWidth(), map->GetHeight() });
 	setDiagonalMovement();
@@ -21,22 +21,23 @@ void AStar::FindPath()
 
 	Node *current = nullptr;
 	NodeSet openSet, closedSet;
-	openSet.insert(new Node(ftoi(map->GetStart())));
 
 	clock.restart();
 
-	while (!openSet.empty()) 
+	openSet.insert(new Node(ftoi(map->GetStart())));
+
+	while (!openSet.empty())
 	{
 		current = *openSet.begin();
-		for (auto node : openSet) 
+		for (auto node : openSet)
 		{
-			if (node->getScore() <= current->getScore()) 
+			if (node->getScore() <= current->getScore())
 			{
 				current = node;
 			}
 		}
 
-		if (current->coordinates_ == ftoi(map->GetEnd())) 
+		if (current->coordinates_ == ftoi(map->GetEnd()))
 		{
 			break;
 		}
@@ -44,10 +45,10 @@ void AStar::FindPath()
 		closedSet.insert(current);
 		openSet.erase(std::find(openSet.begin(), openSet.end(), current));
 
-		for (uint i = 0; i < directions_; ++i) 
+		for (uint i = 0; i < directions_; ++i)
 		{
 			sf::Vector2i newCoordinates(current->coordinates_ + direction_[i]);
-			if (detectCollision(newCoordinates) || findNodeOnList(closedSet, newCoordinates)) 
+			if (detectCollision(newCoordinates) || findNodeOnList(closedSet, newCoordinates))
 			{
 				continue;
 			}
@@ -55,7 +56,7 @@ void AStar::FindPath()
 			uint totalCost = current->G_ + ((i < 4) ? 10 : 14);
 
 			Node *successor = findNodeOnList(openSet, newCoordinates);
-			if (successor == nullptr) 
+			if (successor == nullptr)
 			{
 				successor = new Node(newCoordinates, current);
 				successor->G_ = totalCost;
@@ -63,12 +64,11 @@ void AStar::FindPath()
 				map->GetTile(itof(successor->coordinates_))->SetType(TileType::Checked);
 				openSet.insert(successor);
 			}
-			else if (totalCost < successor->G_) 
+			else if (totalCost < successor->G_)
 			{
 				successor->parent_ = current;
 				successor->G_ = totalCost;
 			}
-			Gui::SetMemory(GetVirtualMemoryUsage());
 		}
 	}
 
@@ -79,13 +79,17 @@ void AStar::FindPath()
 		current = current->parent_;
 	}
 
+	Gui::SetPathLength(path.size());
+
 	map->GetTile(map->GetStart())->SetType(TileType::Start);
 	map->GetTile(map->GetEnd())->SetType(TileType::End);
 
-	releaseNodes(openSet);
-	releaseNodes(closedSet);
 	Gui::SetRunTime(clock.getElapsedTime());
 	Gui::SetRunning(false);
+
+	clearCollisions();
+	releaseNodes(openSet);
+	releaseNodes(closedSet);
 }
 
 void AStar::addCollision(sf::Vector2i coordinates)

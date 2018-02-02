@@ -1,8 +1,9 @@
 #pragma once
 
-#include "BaseAlgorithm.h"
 #include <functional>
 #include <set>
+
+#include "BaseAlgorithm.h"
 
 class AStar : public BaseAlgorithm
 {

@@ -4,297 +4,182 @@
 #include "../Map/Tile.h"
 #include "../Gui/Gui.h"
 
-#include <iostream>
-
-#define INF 32667
-
-
 void Dijkstra::FindPath()
 {
 	Map* map = Map::GetMap();
 
-	end_tile_position_ = (int)map->GetEnd().y * map->GetWidth() + map->GetEnd().x;
-	start_tile_position_ = (int)map->GetStart().y * map->GetWidth() + map->GetStart().x;
+	Gui::SetRunning(true);
+	sf::Clock clock;
+	
+		setWorldSize({ map->GetWidth(), map->GetHeight() });
+		setDiagonalMovement();
+		setCollisionMap();
 
-	matrix_size_ = map->GetHeight() * map->GetWidth();
+		Node *current = nullptr;
+		NodeSet openSet, closedSet;
 
-	SetDirectionCount(4);
-	InitializationLinkMatrix();
+		clock.restart();
 
-	minimum_distance_.at(start_tile_position_) = 0;
+		openSet.insert(new Node(ftoi(map->GetStart())));
 
-	short minimum_index = 0, min = 0, temporary = 0;
-	bool first = true;
-
-	do {
-
-		minimum_index = INF;
-		min = INF;
-
-		for (auto i = 0; i < matrix_size_; ++i)
+		while (!openSet.empty())
 		{
-			if (!checked_tiles_.at(i) && minimum_distance_.at(i) < min)
+			current = *openSet.begin();
+			for (auto node : openSet)
 			{
-				min = minimum_distance_.at(i);
-				minimum_index = i;
-			}
-		}
-
-		if (minimum_index != INF)
-		{
-			for (auto i = 0; i < matrix_size_; ++i)
-			{
-				if (link_matrix_.at(minimum_index).at(i) != INF && map->GetTile(ConvertToVector(i))->GetType() != TileType::Wall)
+				if (node->getScore() <= current->getScore())
 				{
-					temporary = min + link_matrix_.at(minimum_index).at(i);
-					if (temporary < minimum_distance_.at(i))
-						minimum_distance_.at(i) = temporary;
+					current = node;
 				}
 			}
-			if (first)
-				first = false;
-			else
-				map->GetTile(ConvertToVector(minimum_index))->SetType(TileType::Checked);
-			checked_tiles_.at(minimum_index) = true;
-		}
 
-	} while (minimum_index < INF && !checked_tiles_.at(end_tile_position_));
-	
-	/*for (auto i = 0; i < matrix_size_; ++i)
-	{
-		if (i % map->GetWidth() == 0)
-			std::cout << "\n";
-
-		std::cout << minimum_distance_.at(i) << " ";
-	}*/
-
-	SetBackTrace();
-	ShowCheckedTiles();
-	ShowPath();
-
-}
-
-//void Dijkstra::SetBackTrace()
-//{
-//	Map* map = Map::GetMap();
-//
-//	short current_tile_position = end_tile_position_ - 1;
-//	path_map_.push_back(ConvertToVector(current_tile_position + 1));
-//
-//	SetPathLength(minimum_distance_.at(end_tile_position_ - 1));
-//	short current_weight = GetPathLength();
-//
-//	while (current_tile_position != start_tile_position_)
-//	{
-//		for (auto i = 0; i < matrix_size_; ++i)
-//			if (link_matrix_.at(current_tile_position).at(i) != 0)
-//			{
-//				int temporary = current_weight - link_matrix_.at(current_tile_position).at(i);
-//				if (temporary == minimum_distance_.at(i))
-//				{
-//					current_weight = temporary;
-//					current_tile_position = i;
-//					path_map_.push_back(ConvertToVector(i + 1));
-//				}
-//			}
-//	}
-//
-//
-//	/*std::vector<int> ver(matrix_size_);
-//	int end = end_tile_position_ - 1;
-//	ver[0] = end + 1;
-//	path_map_.push_back(ConvertToVector(end + 1));
-//	int k = 1;
-//	int weight = minimum_distance_[end];
-//
-//	while (end != start_tile_position_)
-//	{
-//		for (int i = 0; i < matrix_size_; ++i)
-//			if (link_matrix_.at(end).at(i) != 0)
-//			{
-//				int temp = weight - link_matrix_.at(end).at(i);
-//				if (temp == minimum_distance_.at(i))
-//				{
-//					weight = temp;
-//					end = i;
-//					ver.at(k) = i + 1;
-//					path_map_.push_back(ConvertToVector(i + 1));
-//					k++;
-//				}
-//			}
-// 	}
-//
-//	for (int i = 0; i < path_map_.size(); ++i)
-//	{
-//		if (i % map->GetWidth() == 0)
-//			std::cout << "\n";
-//
-//		std::cout << ver.at(i) << " ";
-//	}*/
-//}
-
-void Dijkstra::SetBackTrace()
-{
-	Map* map = Map::GetMap();
-	
-	SetPathLength(minimum_distance_.at(end_tile_position_));
-	short current_distance = GetPathLength();
-
-	sf::Vector2f current_tile_position = ConvertToVector(end_tile_position_);
-
-	while (current_distance > 0)
-	{
-	
-		path_map_.push_back(current_tile_position);
-		current_distance--;
-
-		for (auto i = 0; i < GetNumberOfDirections(); ++i)
-		{
-			
-			short delta = ConvertToNumber(current_tile_position) + offset_.at(i);
-
-			if (i % map->GetWidth() == 0 && delta % map->GetWidth() == map->GetWidth() - 1)
-				continue;
-
-			if (i % map->GetWidth() == 5 && delta % map->GetWidth() == 0)
-				continue;
-
-			if (delta >= 0 && delta < matrix_size_ && minimum_distance_.at(delta) == current_distance)
+			if (current->coordinates_ == ftoi(map->GetEnd()))
 			{
-				current_tile_position = ConvertToVector(delta);
 				break;
 			}
+
+			closedSet.insert(current);
+			openSet.erase(std::find(openSet.begin(), openSet.end(), current));
+
+			for (uint i = 0; i < directions_; ++i)
+			{
+				sf::Vector2i newCoordinates(current->coordinates_ + direction_[i]);
+				if (detectCollision(newCoordinates) || findNodeOnList(closedSet, newCoordinates))
+				{
+					continue;
+				}
+
+				uint totalCost = current->g_cost_ + ((i < 4) ? 10 : 14);
+
+				Node *successor = findNodeOnList(openSet, newCoordinates);
+				if (successor == nullptr)
+				{
+					successor = new Node(newCoordinates, current);
+					successor->g_cost_ = totalCost;
+					map->GetTile(itof(successor->coordinates_))->SetType(TileType::Checked);
+					openSet.insert(successor);
+				}
+				else if (totalCost < successor->g_cost_)
+				{
+					successor->parent_ = current;
+					successor->g_cost_ = totalCost;
+				}
+			}
 		}
-	}
 
-	path_map_.push_back(map->GetStart());
-
-}
-
-
-void Dijkstra::InitializationLinkMatrix()
-{
-	Map* map = Map::GetMap();
-
-	path_map_.clear();
-	minimum_distance_.clear();
-	checked_tiles_.clear();
-	link_matrix_.clear();
-
-	minimum_distance_.resize(matrix_size_);
-	checked_tiles_.resize(matrix_size_);
-	link_matrix_.resize(matrix_size_);
-	
-	for (auto i = 0; i < matrix_size_; ++i)
-		link_matrix_.at(i).resize(matrix_size_);
-
-	for (auto i = 0; i < matrix_size_; ++i)
-		for (auto j = 0; j < matrix_size_; ++j)
-			link_matrix_.at(i).at(j) = INF;
-
-	for (auto i = 0; i < matrix_size_; ++i)
-		for (auto j = 0; j < GetNumberOfDirections(); ++j)
+		CoordinateList path;
+		while (current != nullptr)
 		{
-			short delta = i + offset_.at(j);
-
-			if (i % map->GetWidth() == 0 && delta % map->GetWidth() == map->GetWidth() - 1)
-				continue;
-
-			if (i % map->GetWidth() == 5 && delta % map->GetWidth() == 0 )
-				continue;
-
-			if (delta >= 0 && delta < matrix_size_)
-					link_matrix_.at(i).at(delta) = 1;
+			path.push_back(current->coordinates_);
+			map->GetTile(itof(current->coordinates_))->SetType(TileType::Path);
+			current = current->parent_;
 		}
 
-	for (auto i = 0; i < matrix_size_; ++i)
-	{
-		minimum_distance_.at(i) = INF;
-		checked_tiles_.at(i) = false;
+		Gui::SetPathLength(path.size());
+
+		map->GetTile(map->GetStart())->SetType(TileType::Start);
+		map->GetTile(map->GetEnd())->SetType(TileType::End);
+
+		Gui::SetRunTime(clock.getElapsedTime());
+		Gui::SetRunning(false);
+		
+		clearCollisions();
+		releaseNodes(openSet);
+		releaseNodes(closedSet);
+		
+}
+
+void Dijkstra::addCollision(sf::Vector2i coordinates)
+{
+	walls_.push_back(coordinates);
+}
+
+bool Dijkstra::detectCollision(sf::Vector2i coordinates)
+{
+	if (coordinates.x < 0 || coordinates.x >= world_size_.x ||
+		coordinates.y < 0 || coordinates.y >= world_size_.y ||
+		std::find(walls_.begin(), walls_.end(), coordinates) != walls_.end()) {
+		return true;
 	}
-
+	return false;
 }
 
-void Dijkstra::ShowPath()
+void Dijkstra::removeCollision(sf::Vector2i coordinates)
+{
+	auto it = std::find(walls_.begin(), walls_.end(), coordinates);
+	if (it != walls_.end()) {
+		walls_.erase(it);
+	}
+}
+
+void Dijkstra::clearCollisions()
+{
+	walls_.clear();
+}
+
+Dijkstra::Node::Node(sf::Vector2i coordinates, Node *parent)
+{
+	parent_ = parent;
+	coordinates_ = coordinates;
+	g_cost_ = 0;
+}
+
+Dijkstra::uint Dijkstra::Node::getScore()
+{
+	return g_cost_;
+}
+
+Dijkstra::Node* Dijkstra::findNodeOnList(NodeSet& nodes, sf::Vector2i coordinates)
+{
+	for (auto node : nodes) {
+		if (node->coordinates_ == coordinates) {
+			return node;
+		}
+	}
+	return nullptr;
+}
+
+void Dijkstra::releaseNodes(NodeSet& nodes)
+{
+	for (auto it = nodes.begin(); it != nodes.end();) {
+		delete *it;
+		it = nodes.erase(it);
+	}
+}
+
+void Dijkstra::setWorldSize(sf::Vector2i world_size)
+{
+	world_size_ = world_size;
+}
+
+void Dijkstra::setCollisionMap()
 {
 	Map* map = Map::GetMap();
 
-	map->GetTile(map->GetStart())->SetType(TileType::Start);
-	map->GetTile(map->GetEnd())->SetType(TileType::End);
+	clearCollisions();
 
-	for (auto i = 1; i < path_map_.size() - 1; ++i)
-		map->GetTile(path_map_.at(i))->SetType(TileType::Path);
+	for (auto x = 0; x < map->GetWidth(); ++x)
+		for (auto y = 0; y < map->GetHeight(); ++y)
+			if (map->GetTile(x, y)->GetType() == TileType::Wall)
+				addCollision({ x, y });
 }
 
-void Dijkstra::ShowCheckedTiles()
+void Dijkstra::setDiagonalMovement()
 {
-	Map* map = Map::GetMap();
+	directions_ = (Gui::Get8Directions() ? 8 : 4);
 
-	for (auto i = 0; i < matrix_size_; ++i)
-		if (checked_tiles_.at(i))
-			map->GetTile(ConvertToVector(i))->SetType(TileType::Checked);
+	direction_ = {
+		{ 0, 1 },{ 1, 0 },{ 0, -1 },{ -1, 0 },
+		{ -1, -1 },{ 1, 1 },{ -1, 1 },{ 1, -1 }
+	};
 }
 
-void Dijkstra::SetDirectionCount(const short number_of_directions)
+sf::Vector2i Dijkstra::ftoi(sf::Vector2f vector)
 {
-	Map* map = Map::GetMap();
-
-	number_of_directions_ = number_of_directions;
-	
-	if (GetNumberOfDirections() == 4)
-		offset_ = { -1, -map->GetWidth(), 1, map->GetWidth() };
-	else
-		if (GetNumberOfDirections() == 8)
-			offset_ = { -1, -map->GetWidth(), 1, map->GetWidth(),
-						-map->GetWidth() - 1, -map->GetWidth() + 1, map->GetWidth() - 1, map->GetWidth() + 1 };
-
+	return { (int)vector.x, (int)vector.y };
 }
 
-unsigned char Dijkstra::GetNumberOfDirections()
+sf::Vector2f Dijkstra::itof(sf::Vector2i vector)
 {
-	return number_of_directions_;
-}
-
-void Dijkstra::SetPathLength(const short path_length)
-{
-	path_length_ = path_length;
-}
-
-short Dijkstra::GetPathLength()
-{
-	return path_length_;
-}
-
-sf::Vector2f Dijkstra::ConvertToVector(short vertex)
-{
-	Map* map = Map::GetMap();
-
-	sf::Vector2f vector;
-
-	vector.x = vertex % map->GetWidth();
-	vector.y = vertex / map->GetWidth();
-
-	return vector;
-}
-
-short Dijkstra::ConvertToNumber(sf::Vector2f vertex)
-{
-	Map* map = Map::GetMap();
-
-	short number;
-
-	number = (int)vertex.y * map->GetWidth() + vertex.x;
-
-	return number;
-
-}
-
-Dijkstra::Dijkstra()
-{
-
-}
-
-Dijkstra::~Dijkstra()
-{
-
+	return { (float)vector.x, (float)vector.y };
 }

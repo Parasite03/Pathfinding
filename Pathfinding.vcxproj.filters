@@ -33,9 +33,6 @@
     <ClInclude Include="Sources\Map\Map.h">
       <Filter>Sources\Map</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Algorithms\LeeAlgorithm.h">
-      <Filter>Sources\Algorithms</Filter>
-    </ClInclude>
     <ClInclude Include="Sources\Utilities\EventManager.h">
       <Filter>Sources\Utilities</Filter>
     </ClInclude>
@@ -93,13 +90,13 @@
     <ClInclude Include="Sources\Algorithms\Dijkstra.h">
       <Filter>Sources\Algorithms</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Algorithms\JumpPointSearch.h">
-      <Filter>Sources\Algorithms</Filter>
-    </ClInclude>
     <ClInclude Include="Sources\Utilities\MemoryUsage.h">
       <Filter>Sources\Utilities</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Algorithms\LeeAlgorithmV2.h">
+    <ClInclude Include="Sources\Algorithms\JPS.h">
+      <Filter>Sources\Algorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Algorithms\LeeAlgorithm.h">
       <Filter>Sources\Algorithms</Filter>
     </ClInclude>
   </ItemGroup>
@@ -112,9 +109,6 @@
     </ClCompile>
     <ClCompile Include="Sources\Map\Map.cpp">
       <Filter>Sources\Map</Filter>
-    </ClCompile>
-    <ClCompile Include="Sources\Algorithms\LeeAlgorithm.cpp">
-      <Filter>Sources\Algorithms</Filter>
     </ClCompile>
     <ClCompile Include="Sources\Utilities\EventManager.cpp">
       <Filter>Sources\Utilities</Filter>
@@ -158,13 +152,13 @@
     <ClCompile Include="Sources\Algorithms\Dijkstra.cpp">
       <Filter>Sources\Algorithms</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Algorithms\JumpPointSearch.cpp">
-      <Filter>Sources\Algorithms</Filter>
-    </ClCompile>
     <ClCompile Include="Sources\Utilities\MemoryUsage.cpp">
       <Filter>Sources\Utilities</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Algorithms\LeeAlgorithmV2.cpp">
+    <ClCompile Include="Sources\Algorithms\JPS.cpp">
+      <Filter>Sources\Algorithms</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Algorithms\LeeAlgorithm.cpp">
       <Filter>Sources\Algorithms</Filter>
     </ClCompile>
   </ItemGroup>

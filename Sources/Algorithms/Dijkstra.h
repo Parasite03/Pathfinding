@@ -1,41 +1,50 @@
 #pragma once
+
+#include <functional>
+#include <set>
+
 #include "BaseAlgorithm.h"
 
 class Dijkstra : public BaseAlgorithm
 {
 
 public:
-	Dijkstra();
-	~Dijkstra();
+	using uint = unsigned int;
+	using CoordinateList = std::vector<sf::Vector2i>;
+
+	struct Node
+	{
+		uint g_cost_;
+		sf::Vector2i coordinates_;
+		Node *parent_;
+
+		Node(sf::Vector2i coord, Node *parent = nullptr);
+		uint getScore();
+	};
+
+	using NodeSet = std::set<Node*>;
 
 	void FindPath() override;
-	unsigned char GetNumberOfDirections();
-	short GetPathLength();
-	void ShowCheckedTiles();
-	void ShowPath();
+
+	void addCollision(sf::Vector2i coordinates);
+	bool detectCollision(sf::Vector2i coordinates);
+	void removeCollision(sf::Vector2i coordinates);
+	void clearCollisions();
+
+	Node* findNodeOnList(NodeSet& nodes, sf::Vector2i coordinates);
+	void releaseNodes(NodeSet& nodes);
+
+	void setWorldSize(sf::Vector2i worldSize);
+	void setCollisionMap();
+	void setDiagonalMovement();
+
+	sf::Vector2i ftoi(sf::Vector2f vector);
+	sf::Vector2f itof(sf::Vector2i vector);
 
 private:
 
-	void SetDirectionCount(const short number_of_directions);
-	void SetPathLength(const short path_length);
-	void SetBackTrace();
-	
-	void InitializationLinkMatrix();
-	
-	sf::Vector2f ConvertToVector(short vertex);
-	short ConvertToNumber(sf::Vector2f vertex);
-
-	short number_of_directions_;
-	short matrix_size_;
-	short path_length_;
-
-	short end_tile_position_;
-	short start_tile_position_;
-
-	std::vector<sf::Vector2f> path_map_;
-	std::vector<std::vector<short>> link_matrix_;
-	std::vector<short> minimum_distance_;
-	std::vector<bool> checked_tiles_;
-	std::vector<int> offset_;
+	CoordinateList direction_, walls_;
+	sf::Vector2i world_size_;
+	uint directions_;
 
 };

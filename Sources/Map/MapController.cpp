@@ -33,7 +33,16 @@ void MapController::MoveView()
 	
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) && !sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
 		view.move(0, 10);
+	
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z))
+		view.zoom(1.0100f);
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+		view.setSize(640, 480);
+
 	window_->setView(view);
+
+	
 
 	if (EventManager::GetEvent(sf::Event::KeyPressed) && sf::Keyboard::isKeyPressed(sf::Keyboard::Home))
 		CenterView();
