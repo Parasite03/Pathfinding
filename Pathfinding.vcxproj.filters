@@ -93,7 +93,10 @@
     <ClInclude Include="Sources\Utilities\MemoryUsage.h">
       <Filter>Sources\Utilities</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Algorithms\Wave.h">
+    <ClInclude Include="Sources\Algorithms\JPS.h">
+      <Filter>Sources\Algorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Algorithms\LeeAlgorithm.h">
       <Filter>Sources\Algorithms</Filter>
     </ClInclude>
   </ItemGroup>
@@ -152,7 +155,10 @@
     <ClCompile Include="Sources\Utilities\MemoryUsage.cpp">
       <Filter>Sources\Utilities</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Algorithms\Wave.cpp">
+    <ClCompile Include="Sources\Algorithms\JPS.cpp">
+      <Filter>Sources\Algorithms</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Algorithms\LeeAlgorithm.cpp">
       <Filter>Sources\Algorithms</Filter>
     </ClCompile>
   </ItemGroup>

@@ -1,6 +1,6 @@
 #include "Algorithm.h"
 #include "../Gui/Gui.h"
-#include "Wave.h"
+#include "LeeAlgorithm.h"
 #include "AStar.h"
 #include "Dijkstra.h"
 
@@ -13,7 +13,7 @@ void InitializeAlgorithms()
 	algorithm_pointers.emplace(Algorithm::AStar, std::unique_ptr<BaseAlgorithm>(new AStar));
 
 	algorithm_names.emplace(Algorithm::Wave, "Wave");
-	algorithm_pointers.emplace(Algorithm::Wave, std::unique_ptr<BaseAlgorithm>(new Wave));
+	algorithm_pointers.emplace(Algorithm::Wave, std::unique_ptr<BaseAlgorithm>(new LeeAlgorithm));
 	
 	algorithm_names.emplace(Algorithm::Dijkstra, "Dijkstra");
 	algorithm_pointers.emplace(Algorithm::Dijkstra, std::unique_ptr<BaseAlgorithm>(new Dijkstra));
