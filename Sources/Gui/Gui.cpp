@@ -136,12 +136,12 @@ void Gui::Update()
 		Map::GetMap()->ClearAlgorithmResults();
 	}
 
-	if (ImGui::Button("Dump Time"))
-	{
-		std::fstream file("./results.txt");
-		file << time << std::endl;
-		file.close();
-	}
+	//if (ImGui::Button("Dump Time"))
+	//{
+	//	std::fstream file("./results.txt");
+	//	file << time << std::endl;
+	//	file.close();
+	//}
 
 	ImGui::Checkbox("8 Directions", &use_8_directions_);
 

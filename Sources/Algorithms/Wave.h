@@ -1,11 +1,11 @@
 #pragma once
 #include "BaseAlgorithm.h"
 
-class AStar :
+class Wave :
 	public BaseAlgorithm
 {
 public:
-	AStar();
-	~AStar();
+	Wave();
+	~Wave();
 };
 
